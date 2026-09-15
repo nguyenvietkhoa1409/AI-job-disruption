@@ -34,6 +34,8 @@ tests/
 
 ## Setup
 
+Requires **Python 3.12.x** (CI and `requirements.txt` pins are tested against 3.12; `numpy==2.5.3` has no wheels for 3.11 or earlier).
+
 ```
 python -m venv .venv
 .venv\Scripts\activate
