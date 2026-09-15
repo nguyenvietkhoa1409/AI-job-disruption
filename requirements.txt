@@ -1,5 +1,5 @@
-pandas
-numpy
+pandas==3.0.5
+numpy==2.5.3
 sqlalchemy
 psycopg2-binary
 python-dotenv
@@ -7,4 +7,4 @@ pyyaml
 matplotlib
 seaborn
 scikit-learn
-pytest
+pytest==9.1.1
