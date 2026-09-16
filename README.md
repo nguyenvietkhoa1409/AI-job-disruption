@@ -54,3 +54,9 @@ Raw datasets are not committed to this repository (see `.gitignore`). Place sour
 - `layoffs.csv`
 - `ai_jobs_market_2025_2026.csv`
 - `survey_results_public.csv` / `survey_results_public-selected-columns.csv`
+
+After placing the files, smoke test that all three sources load against the real data (this is not part of `pytest`, since CI never has the real files):
+
+```
+python validate_sources.py
+```
