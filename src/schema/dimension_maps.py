@@ -221,3 +221,20 @@ ROLE_MAP: dict[str, str] = {
 }
 
 ROLE_CATEGORIES = ("Emerging", "Traditional")
+
+# AI Jobs experience_level ships as "<bucket> (<years> yrs)" (e.g.
+# "Senior (6-9 yrs)"), not the bare bucket name. A rule that checks
+# raw values against a bare-label allow-list (['Entry','Mid','Senior','Lead'])
+# would match 0/1500 rows and quarantine the entire dataset - none of the
+# real file's 4 raw strings equal a bare label. This map's keys are the
+# raw strings actually observed in data/raw/ai_jobs_market_2025_2026.csv,
+# so quality rules can check .isin(EXPERIENCE_MAP) against what the file
+# really contains, same pattern as COUNTRY_MAP/INDUSTRY_MAP/ROLE_MAP.
+EXPERIENCE_MAP: dict[str, str] = {
+    "Entry (0-2 yrs)": "Entry",
+    "Mid (3-5 yrs)": "Mid",
+    "Senior (6-9 yrs)": "Senior",
+    "Lead (10+ yrs)": "Lead",
+}
+
+EXPERIENCE_LEVELS = ("Entry", "Mid", "Senior", "Lead")

@@ -114,6 +114,30 @@ manually: `"Applied scientist"` was initially assumed AI-adjacent, but on
 review it's a general applied-research title (could be physics, chemistry,
 ML, etc.), not AI-exclusive — kept as `"Traditional"`.
 
+## EXPERIENCE_MAP
+
+**Approach:** `experience_level` in `data/raw/ai_jobs_market_2025_2026.csv`
+ships as `"<bucket> (<years> yrs)"`, not the bare bucket name:
+
+| Raw value | Rows | Bucket |
+|---|---|---|
+| `Entry (0-2 yrs)` | 385 | Entry |
+| `Lead (10+ yrs)` | 381 | Lead |
+| `Mid (3-5 yrs)` | 370 | Mid |
+| `Senior (6-9 yrs)` | 364 | Senior |
+
+**Why this map exists:** a quality rule that checks the raw column against
+a bare-label allow-list (`.isin(['Entry','Mid','Senior','Lead'])`) matches
+**0/1500** rows, since none of the 4 raw strings equal a bare label —
+that would quarantine the entire dataset. `EXPERIENCE_MAP`'s keys are the
+raw strings actually observed in the file (same pattern as `COUNTRY_MAP`/
+`INDUSTRY_MAP`/`ROLE_MAP`), so `ai_jobs_rules.py` checks
+`.isin(EXPERIENCE_MAP)` against what the file really contains, and the
+map's values are the normalized bucket used downstream.
+
+**Coverage:** 4/4 distinct raw values mapped, verified against the real
+file (100%).
+
 ## Fail-loud principle
 
 `COUNTRY_MAP` raises `ValueError` at import time if `country_converter`

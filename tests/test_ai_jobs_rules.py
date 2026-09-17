@@ -43,6 +43,7 @@ def df():
         _row(job_id="AIJOB0006", country="Narnia"),
         _row(job_id="AIJOB0007", industry="Wizardry"),
         _row(job_id="AIJOB0008", job_title="Wizard"),
+        _row(job_id="AIJOB0009", experience_level="Senior"),  # bare label, not the raw "Senior (6-9 yrs)" form
     ], columns=COLUMNS)
 
 
@@ -76,6 +77,16 @@ def test_unmapped_country_industry_role_are_quarantined(df):
     assert "country_not_in_dimension_map" in quarantine.loc[quarantine["job_id"] == "AIJOB0006", "quarantine_reason"].iloc[0]
     assert "industry_not_in_dimension_map" in quarantine.loc[quarantine["job_id"] == "AIJOB0007", "quarantine_reason"].iloc[0]
     assert "job_title_not_in_dimension_map" in quarantine.loc[quarantine["job_id"] == "AIJOB0008", "quarantine_reason"].iloc[0]
+
+
+def test_valid_raw_experience_level_is_not_quarantined(df):
+    clean, _ = AIJobsQualityRules().apply(df)
+    assert "AIJOB0001" in clean["job_id"].values  # experience_level="Senior (6-9 yrs)"
+
+
+def test_unmapped_experience_level_is_quarantined(df):
+    _, quarantine = AIJobsQualityRules().apply(df)
+    assert "experience_level_not_in_dimension_map" in quarantine.loc[quarantine["job_id"] == "AIJOB0009", "quarantine_reason"].iloc[0]
 
 
 def test_clean_and_quarantine_rows_sum_to_input(df):

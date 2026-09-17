@@ -8,6 +8,8 @@ dimension_maps.md.
 
 from src.schema.dimension_maps import (
     COUNTRY_MAP,
+    EXPERIENCE_LEVELS,
+    EXPERIENCE_MAP,
     INDUSTRY_MAP,
     INDUSTRY_SECTORS,
     ROLE_CATEGORIES,
@@ -60,3 +62,21 @@ def test_role_map_survey_ai_devtypes_are_emerging_rest_traditional():
     assert ROLE_MAP["Developer, AI apps or physical AI"] == "Emerging"
     assert ROLE_MAP["Applied scientist"] == "Traditional"
     assert ROLE_MAP["Developer, back-end"] == "Traditional"
+
+
+def test_experience_map_keys_are_the_raw_ai_jobs_strings():
+    assert set(EXPERIENCE_MAP.keys()) == {
+        "Entry (0-2 yrs)", "Mid (3-5 yrs)", "Senior (6-9 yrs)", "Lead (10+ yrs)",
+    }
+
+
+def test_experience_map_values_are_only_the_bare_levels():
+    assert set(EXPERIENCE_MAP.values()) == set(EXPERIENCE_LEVELS)
+
+
+def test_experience_map_bare_labels_are_not_keys():
+    # Regression guard: a rule checking .isin(['Entry','Mid','Senior','Lead'])
+    # against the raw column (which is "Senior (6-9 yrs)", not "Senior")
+    # would quarantine 100% of rows. EXPERIENCE_MAP's keys must be the raw
+    # strings, not the bare bucket names.
+    assert not set(EXPERIENCE_LEVELS) & set(EXPERIENCE_MAP.keys())
