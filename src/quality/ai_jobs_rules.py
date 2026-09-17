@@ -3,7 +3,7 @@
 import pandas as pd
 
 from src.quality.base_rule_set import BaseQualityRuleSet
-from src.schema.dimension_maps import COUNTRY_MAP, INDUSTRY_MAP, ROLE_MAP
+from src.schema.dimension_maps import COUNTRY_MAP, EXPERIENCE_MAP, INDUSTRY_MAP, ROLE_MAP
 
 
 class AIJobsQualityRules(BaseQualityRuleSet):
@@ -31,5 +31,6 @@ class AIJobsQualityRules(BaseQualityRuleSet):
             "country_not_in_dimension_map": df["country"].notna() & ~df["country"].isin(COUNTRY_MAP),
             "industry_not_in_dimension_map": df["industry"].notna() & ~df["industry"].isin(INDUSTRY_MAP),
             "job_title_not_in_dimension_map": df["job_title"].notna() & ~df["job_title"].isin(ROLE_MAP),
+            "experience_level_not_in_dimension_map": df["experience_level"].notna() & ~df["experience_level"].isin(EXPERIENCE_MAP),
         }
         return self._split(df, rule_masks)
