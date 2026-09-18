@@ -62,3 +62,20 @@ def test_unmapped_country_and_industry_are_quarantined(df):
 def test_clean_and_quarantine_rows_sum_to_input(df):
     clean, quarantine = LayoffsQualityRules().apply(df)
     assert len(clean) + len(quarantine) == len(df)
+
+
+def test_same_key_conflicting_values_keeps_latest_date_added():
+    df = pd.DataFrame([
+        _row(company="Dup Co", date_added="1/1/2026", total_laid_off=10.0),
+        _row(company="Dup Co", date_added="1/5/2026", total_laid_off=20.0),
+    ], columns=COLUMNS)
+    clean, quarantine = LayoffsQualityRules().apply(df)
+    assert len(clean) == 1
+    assert clean.iloc[0]["date_added"] == "1/5/2026"
+    assert "duplicate_key_conflicting_values" in quarantine["quarantine_reason"].iloc[0]
+
+
+def test_exact_duplicate_rows_are_not_double_counted_as_key_conflict():
+    df = pd.DataFrame([_row(company="Exact Dup"), _row(company="Exact Dup")], columns=COLUMNS)
+    _, quarantine = LayoffsQualityRules().apply(df)
+    assert quarantine["quarantine_reason"].tolist() == ["duplicate_row"]
