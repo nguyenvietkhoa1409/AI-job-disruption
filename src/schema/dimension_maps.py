@@ -238,3 +238,14 @@ EXPERIENCE_MAP: dict[str, str] = {
 }
 
 EXPERIENCE_LEVELS = ("Entry", "Mid", "Senior", "Lead")
+
+# required_skills tags with visually-similar wording that were verified
+# (not assumed) to be the same concept via job_title co-occurrence check -
+# see reports/eda/text_mining_exploration.md section 1.3. Other near-duplicate
+# candidates (Risk Analysis/Assessment/Management, Prompt Design/Engineering,
+# ML/ML Algorithms, LLM APIs/GenAI APIs/APIs, Deep Learning/Neural Networks)
+# were each exclusive to one job_title and kept separate deliberately.
+SKILL_MAP: dict[str, str] = {
+    "Cloud (AWS/GCP/Azure)": "Cloud",
+    "LLM Fine-tuning": "Fine-tuning",
+}
