@@ -10,7 +10,7 @@ collapsed into role_category.
 import pandas as pd
 
 from src.preprocessing.base_transformer import BaseTransformer
-from src.schema.dimension_maps import COUNTRY_MAP, EXPERIENCE_MAP, INDUSTRY_MAP, ROLE_MAP
+from src.schema.dimension_maps import COUNTRY_MAP, EXPERIENCE_MAP, INDUSTRY_MAP, ROLE_MAP, SKILL_MAP
 
 
 class AIJobsTransformer(BaseTransformer):
@@ -20,5 +20,11 @@ class AIJobsTransformer(BaseTransformer):
         df["industry_sector"] = df["industry"].map(INDUSTRY_MAP)
         df["role_category"] = df["job_title"].map(ROLE_MAP)
         df["experience_level_canonical"] = df["experience_level"].map(EXPERIENCE_MAP)
+        df["required_skills_normalized"] = df["required_skills"].apply(self._normalize_skills)
         # job_category, is_llm_role: kept as-is, no transform needed
         return df
+
+    @staticmethod
+    def _normalize_skills(tags: str) -> str:
+        normalized = {SKILL_MAP.get(t.strip(), t.strip()) for t in tags.split("|")}
+        return "|".join(sorted(normalized))
