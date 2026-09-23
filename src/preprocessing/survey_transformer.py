@@ -32,6 +32,14 @@ from src.schema.dimension_maps import (
 AI_SENTIMENT_COLS = ("AIThreat", "AISelect", "AISent", "AIAcc")
 NOT_ANSWERED = "Not answered"
 
+# AIOpen spam/troll filter: a genuine one-word answer ("debugging") also has
+# repeated-token ratio 1.0, so ratio alone is not a signal - it only becomes
+# spam once the answer is also long. Tuned against the real file, where the
+# only true troll response is a 175K-char answer repeating "no" thousands of
+# times - see reports/eda/text_mining_exploration.md section 1.2.
+AIOPEN_SPAM_MIN_WORDS = 15
+AIOPEN_SPAM_RATIO = 0.8
+
 
 class SurveyTransformer(BaseTransformer):
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -48,6 +56,8 @@ class SurveyTransformer(BaseTransformer):
         for col in AI_SENTIMENT_COLS:
             df[col] = df[col].fillna(NOT_ANSWERED)
 
+        df["ai_open_clean"] = df["AIOpen"].mask(df["AIOpen"].apply(self._is_aiopen_spam))
+
         return df
 
     @staticmethod
@@ -55,3 +65,13 @@ class SurveyTransformer(BaseTransformer):
         observed = series.dropna()
         lo, hi = observed.quantile([lower, upper])
         return series.clip(lower=lo, upper=hi)
+
+    @staticmethod
+    def _is_aiopen_spam(text) -> bool:
+        if pd.isna(text):
+            return False
+        tokens = str(text).lower().split()
+        if len(tokens) <= AIOPEN_SPAM_MIN_WORDS:
+            return False
+        most_common_count = pd.Series(tokens).value_counts().iloc[0]
+        return (most_common_count / len(tokens)) > AIOPEN_SPAM_RATIO

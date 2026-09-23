@@ -245,3 +245,14 @@ EXPERIENCE_LEVELS = ("Entry", "Mid", "Senior", "Lead")
 # Entry=[0,2], Mid=[3,5], Senior=[6,9], Lead=[10,+inf) - see
 # SurveyTransformer and fact_survey_response's docstring in star_schema.py.
 EXPERIENCE_BUCKET_BINS: list[float] = [-float("inf"), 2, 5, 9, float("inf")]
+
+# required_skills tags with visually-similar wording that were verified
+# (not assumed) to be the same concept via job_title co-occurrence check -
+# see reports/eda/text_mining_exploration.md section 1.3. Other near-duplicate
+# candidates (Risk Analysis/Assessment/Management, Prompt Design/Engineering,
+# ML/ML Algorithms, LLM APIs/GenAI APIs/APIs, Deep Learning/Neural Networks)
+# were each exclusive to one job_title and kept separate deliberately.
+SKILL_MAP: dict[str, str] = {
+    "Cloud (AWS/GCP/Azure)": "Cloud",
+    "LLM Fine-tuning": "Fine-tuning",
+}

@@ -29,6 +29,9 @@ env/
 .ruff_cache/
 .ipynb_checkpoints/
 
+# Exploratory notebooks (scratch analysis, not reviewed/pipeline code)
+notebooks/
+
 # OS / editor
 .DS_Store
 Thumbs.db
