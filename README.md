@@ -60,3 +60,30 @@ After placing the files, smoke test that all three sources load against the real
 ```
 python validate_sources.py
 ```
+
+## Database (Docker + PostgreSQL)
+
+The star schema (`schema/001_dimensions.sql`, `002_facts.sql`, `003_mart_country_month.sql`) runs on a local PostgreSQL container.
+
+```
+cp .env.example .env
+docker compose up -d
+docker compose ps          # wait for postgres to report "healthy"
+```
+
+On first startup (empty volume), the postgres image auto-runs every `.sql` file under `schema/` in filename order, so the 7 dimension tables, 4 fact tables, and `mart_country_month` materialized view all exist right away. Verify with:
+
+```
+docker exec -it ai_job_disruption_pg psql -U airflow -d ai_job_disruption -c "\dt" -c "\dm"
+```
+
+`\dt` lists the 11 tables; `mart_country_month` is a materialized view, so it only shows under `\dm`. Tables are empty until the loader runs. `docker exec` connects inside the container and skips the password; external clients (Python loader, DBeaver) connect to `localhost:5432` with the password from `.env`.
+
+Postgres only reads `POSTGRES_PASSWORD` when it first creates the database. To change it later, edit `.env`, then recreate the volume (this wipes all data):
+
+```
+docker compose down -v
+docker compose up -d
+```
+
+`.env` holds real local credentials and is gitignored - never commit it. `.env.example` is the template teammates copy from.
