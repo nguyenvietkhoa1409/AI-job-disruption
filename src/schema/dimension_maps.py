@@ -238,3 +238,10 @@ EXPERIENCE_MAP: dict[str, str] = {
 }
 
 EXPERIENCE_LEVELS = ("Entry", "Mid", "Senior", "Lead")
+
+# Numeric cutoffs backing the same Entry/Mid/Senior/Lead buckets, for
+# datasets that report years of experience as a number instead of AI Jobs'
+# pre-labeled string (e.g. Survey's WorkExp). right=True bin edges give
+# Entry=[0,2], Mid=[3,5], Senior=[6,9], Lead=[10,+inf) - see
+# SurveyTransformer and fact_survey_response's docstring in star_schema.py.
+EXPERIENCE_BUCKET_BINS: list[float] = [-float("inf"), 2, 5, 9, float("inf")]
