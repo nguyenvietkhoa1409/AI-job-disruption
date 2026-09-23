@@ -10,12 +10,24 @@ early in this project (see reports/data_dictionary/PROJECT_CONTEXT.md):
   instead of mode-imputation, since these are the sentiment fields the
   project's analysis is actually about - imputing the mode would inflate
   the most common answer and bias that exact conclusion.
+
+experience_level_canonical is bucketed from WorkExp (professional
+experience) via EXPERIENCE_BUCKET_BINS, using the same Entry/Mid/Senior/Lead
+boundaries as AI Jobs' EXPERIENCE_MAP - not YearsCode, which includes
+hobbyist coding and would overstate a respondent's professional bucket. See
+fact_survey_response's docstring in star_schema.py.
 """
 
 import pandas as pd
 
 from src.preprocessing.base_transformer import BaseTransformer
-from src.schema.dimension_maps import COUNTRY_MAP, INDUSTRY_MAP, ROLE_MAP
+from src.schema.dimension_maps import (
+    COUNTRY_MAP,
+    EXPERIENCE_BUCKET_BINS,
+    EXPERIENCE_LEVELS,
+    INDUSTRY_MAP,
+    ROLE_MAP,
+)
 
 AI_SENTIMENT_COLS = ("AIThreat", "AISelect", "AISent", "AIAcc")
 NOT_ANSWERED = "Not answered"
@@ -35,6 +47,9 @@ class SurveyTransformer(BaseTransformer):
         df["country_canonical"] = df["Country"].map(COUNTRY_MAP)
         df["industry_sector"] = df["Industry"].map(INDUSTRY_MAP)
         df["role_category"] = df["DevType"].map(ROLE_MAP)
+        df["experience_level_canonical"] = pd.cut(
+            df["WorkExp"], bins=EXPERIENCE_BUCKET_BINS, labels=EXPERIENCE_LEVELS
+        ).astype(object)
 
         df["converted_comp_yearly_winsorized"] = self._winsorize(df["ConvertedCompYearly"])
 

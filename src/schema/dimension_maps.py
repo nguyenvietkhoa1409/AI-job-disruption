@@ -239,6 +239,13 @@ EXPERIENCE_MAP: dict[str, str] = {
 
 EXPERIENCE_LEVELS = ("Entry", "Mid", "Senior", "Lead")
 
+# Numeric cutoffs backing the same Entry/Mid/Senior/Lead buckets, for
+# datasets that report years of experience as a number instead of AI Jobs'
+# pre-labeled string (e.g. Survey's WorkExp). right=True bin edges give
+# Entry=[0,2], Mid=[3,5], Senior=[6,9], Lead=[10,+inf) - see
+# SurveyTransformer and fact_survey_response's docstring in star_schema.py.
+EXPERIENCE_BUCKET_BINS: list[float] = [-float("inf"), 2, 5, 9, float("inf")]
+
 # required_skills tags with visually-similar wording that were verified
 # (not assumed) to be the same concept via job_title co-occurrence check -
 # see reports/eda/text_mining_exploration.md section 1.3. Other near-duplicate
