@@ -1,0 +1,16 @@
+# Extends the official Airflow image with this project's own dependencies,
+# so DAG tasks (airflow/dags/warehouse_pipeline_dag.py) can import src.*
+# (pandas, scikit-learn, psycopg2...) in the same Python process Airflow
+# itself runs in - SequentialExecutor runs tasks in-process, there is no
+# separate worker environment to install into.
+FROM apache/airflow:2.10.4-python3.12
+
+COPY requirements.txt /tmp/requirements.txt
+
+# No --constraint: Airflow 2.10.4's constraints file pins pandas==2.1.4
+# (pulled in by a bundled provider, not by Airflow core), which hard-conflicts
+# with this project's pandas==3.0.5 - there is no version satisfying both.
+# Installing unconstrained instead; verified below that Airflow itself
+# (webserver/scheduler/DagBag parsing) still comes up fine with pandas 3.x
+# present, since none of the providers this DAG actually uses touch pandas.
+RUN pip install --no-cache-dir -r /tmp/requirements.txt

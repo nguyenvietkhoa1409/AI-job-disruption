@@ -1,0 +1,8 @@
+# Only needed to parse/validate the DAG (tests/test_dag_integrity.py) and to
+# build the airflow image (Dockerfile.airflow installs requirements.txt into
+# the official apache/airflow image directly, not this file). Kept separate
+# from requirements.txt so the main pytest CI job / a plain dev install stays
+# light - apache-airflow pulls in a lot that this project's own code never
+# needs.
+--constraint https://raw.githubusercontent.com/apache/airflow/constraints-2.10.4/constraints-3.12.txt
+apache-airflow==2.10.4
