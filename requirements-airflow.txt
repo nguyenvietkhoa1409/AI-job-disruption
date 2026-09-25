@@ -1,0 +1,14 @@
+# Only needed to parse/validate the DAG (tests/test_dag_integrity.py) and to
+# build the airflow image (Dockerfile.airflow installs requirements.txt into
+# the official apache/airflow image directly, not this file). Kept separate
+# from requirements.txt so the main pytest CI job / a plain dev install stays
+# light - apache-airflow pulls in a lot that this project's own code never
+# needs.
+# No version pin on pytest: this project's requirements.txt pins 9.1.1, but
+# --constraint above pins 8.3.4 (what Airflow 2.10.4 itself is tested
+# against) - a hard conflict if pinned here too. This job only runs one
+# structural test (tests/test_dag_integrity.py), which needs nothing
+# version-specific, so let the constraint pick the version.
+--constraint https://raw.githubusercontent.com/apache/airflow/constraints-2.10.4/constraints-3.12.txt
+apache-airflow==2.10.4
+pytest

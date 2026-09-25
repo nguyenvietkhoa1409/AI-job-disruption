@@ -21,5 +21,50 @@ services:
       timeout: 5s
       retries: 5
 
+  # Single-container Airflow for local dev (`airflow standalone`): inits its
+  # own SQLite metadata DB + admin user on first start (password written to
+  # standalone_admin_password.txt inside the airflow_home volume) and runs
+  # webserver + scheduler + triggerer in one process. SequentialExecutor
+  # (the standalone default) runs DAG tasks one at a time - fine here, the
+  # DAG has ~5 short tasks and this is a 2-person dev project, not a
+  # production deployment.
+  airflow:
+    build:
+      context: .
+      dockerfile: Dockerfile.airflow
+    container_name: ai_job_disruption_airflow
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: standalone
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      # Container-to-container networking: the warehouse Postgres is
+      # reachable as "postgres" here, not "localhost" (that's only true from
+      # the host machine, e.g. when running setup_database.py directly).
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      # DAG tasks do `from src... import ...`; the project root is mounted
+      # at /opt/project (see volumes below) so those imports resolve.
+      PYTHONPATH: /opt/project
+    ports:
+      - "8080:8080"
+    volumes:
+      # AIRFLOW_HOME (default /opt/airflow) stays on a native Docker volume,
+      # NOT a Windows bind mount: Airflow's SQLite metadata DB needs POSIX
+      # file locking that Docker Desktop's Windows<->WSL2 bind-mount layer
+      # does not reliably provide - tried it, got
+      # "sqlite3.OperationalError: disk I/O error" on every write. Only the
+      # dags/ subfolder is bind-mounted (plain .py reads, no locking issue),
+      # so DAG edits on the host are still picked up without a rebuild.
+      - airflow_home:/opt/airflow
+      - ./airflow/dags:/opt/airflow/dags
+      - .:/opt/project
+
 volumes:
   pg_data:
+  airflow_home:
