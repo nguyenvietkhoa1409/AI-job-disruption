@@ -16,7 +16,16 @@ from pathlib import Path
 
 import pytest
 
-pytest.importorskip("airflow", reason="apache-airflow not installed (see requirements-airflow.txt)")
+# Checks the "airflow.models" submodule specifically, not "airflow": this
+# project's own airflow/ directory (airflow/dags/) has no __init__.py, so
+# when the real apache-airflow package is NOT installed, Python still
+# resolves a bare `import airflow` to it as an (empty) PEP 420 namespace
+# package - importorskip("airflow") would then NOT skip, and the fixture
+# below would fail with a confusing ModuleNotFoundError instead. The real
+# package's airflow.models submodule only exists when apache-airflow is
+# actually installed, so checking that leaf module is what actually detects
+# "is the real package present".
+pytest.importorskip("airflow.models", reason="apache-airflow not installed (see requirements-airflow.txt)")
 
 DAGS_DIR = Path(__file__).resolve().parents[1] / "airflow" / "dags"
 
