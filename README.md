@@ -71,7 +71,7 @@ docker compose up -d
 docker compose ps          # wait for postgres to report "healthy"
 ```
 
-On first startup (empty volume), the postgres image auto-runs every `.sql` file under `schema/` in filename order, so the 7 dimension tables, 4 fact tables, and `mart_country_month` materialized view all exist right away. Verify with:
+On first startup (empty volume), the postgres image auto-runs every `.sql` file under `schema/` in filename order, so the 8 dimension tables, 4 fact tables, and `mart_country_month` materialized view all exist right away. Verify with:
 
 ```
 docker exec -it ai_job_disruption_pg psql -U airflow -d ai_job_disruption -c "\dt" -c "\dm"
