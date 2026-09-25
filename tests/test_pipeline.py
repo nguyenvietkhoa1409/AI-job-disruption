@@ -107,3 +107,29 @@ def test_run_end_to_end_with_real_layoffs_classes(tmp_path):
     assert result.clean_rows == 1
     assert result.quarantine_rows == 1
     assert "country_canonical" in result.processed.columns
+
+class _DummyFeatureEngineer:
+    """Duck-typed stand-in for a BaseFeatureEngineer with one side table."""
+
+    def engineer(self, df: pd.DataFrame) -> pd.DataFrame:
+        df = df.copy()
+        df["value_tripled"] = df["value"] * 3
+        return df
+
+    def artifacts(self) -> dict[str, pd.DataFrame]:
+        return {"lookup": pd.DataFrame({"k": [1], "v": ["a"]})}
+
+
+def test_run_applies_feature_engineer_and_writes_its_artifacts(tmp_path):
+    pipeline = DatasetPipeline(
+        "widgets", _DummySource(), _DummyQualityRules(), _DummyTransformer(), DatasetProfiler(), _DummyFeatureEngineer()
+    )
+    result = pipeline.run()
+
+    assert list(pd.read_csv(result.processed_path)["value_tripled"]) == [30, 60]
+    assert result.artifact_paths["lookup"] == tmp_path / "data" / "processed" / "widgets_lookup.csv"
+    assert list(pd.read_csv(result.artifact_paths["lookup"])["v"]) == ["a"]
+
+
+def test_run_without_feature_engineer_writes_no_artifacts():
+    assert _make_pipeline().run().artifact_paths == {}

@@ -1,5 +1,5 @@
 """Run the full DatasetPipeline (source -> quality -> quarantine -> transform
--> processed CSV -> profile) for all three datasets.
+-> feature engineering -> processed CSV -> profile) for all three datasets.
 
 Requires the real raw CSVs under data/raw/ (gitignored, not part of CI) -
 same precondition as validate_sources.py. Writes data/processed/<name>.csv
@@ -12,6 +12,7 @@ from src.data_sources.ai_jobs_source import AIJobsSource
 from src.data_sources.layoffs_source import LayoffsSource
 from src.data_sources.survey_source import SurveySource
 from src.eda.profiler import DatasetProfiler
+from src.feature_engineering.survey_feature_engineer import SurveyFeatureEngineer
 from src.pipeline import DatasetPipeline
 from src.preprocessing.ai_jobs_transformer import AIJobsTransformer
 from src.preprocessing.layoffs_transformer import LayoffsTransformer
@@ -23,7 +24,9 @@ from src.quality.survey_rules import SurveyQualityRules
 PIPELINES = [
     DatasetPipeline("layoffs", LayoffsSource(), LayoffsQualityRules(), LayoffsTransformer(), DatasetProfiler()),
     DatasetPipeline("ai_jobs", AIJobsSource(), AIJobsQualityRules(), AIJobsTransformer(), DatasetProfiler()),
-    DatasetPipeline("survey", SurveySource(), SurveyQualityRules(), SurveyTransformer(), DatasetProfiler()),
+    DatasetPipeline(
+        "survey", SurveySource(), SurveyQualityRules(), SurveyTransformer(), DatasetProfiler(), SurveyFeatureEngineer()
+    ),
 ]
 
 
