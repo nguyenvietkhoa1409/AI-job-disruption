@@ -93,7 +93,7 @@ def _write_processed(processed_dir: Path) -> None:
              "AIAcc": "High", "JobSat": 8.0, "experience_level_canonical": "Mid",
              "converted_comp_yearly_winsorized": 120000.0, "ai_open_topic_id": 0.0},
             {"ResponseId": 2, "MainBranch": "I am a developer", "Age": "Prefer not to say", "EdLevel": "Master's",
-             "Employment": "Employed", "RemoteWork": "On-site", "WorkExp": None, "YearsCode": None,
+             "Employment": "Employed", "RemoteWork": None, "WorkExp": None, "YearsCode": None,
              "DevType": None, "role_category": None, "country_canonical": None, "industry_sector": None,
              "AIThreat": "No", "AISelect": "Yes", "AISent": "Favorable", "AIAcc": "High", "JobSat": None,
              "experience_level_canonical": None, "converted_comp_yearly_winsorized": None, "ai_open_topic_id": None},
@@ -186,3 +186,20 @@ def test_mart_refresh_buckets_missing_country_as_unknown(db_conn, processed_dir)
 
     assert row is not None
     assert row[0] == 1
+
+
+def test_missing_text_values_load_as_null_not_nan_string(db_conn, processed_dir):
+    # Regression: pandas stores a missing text cell as float NaN; without
+    # cleaning, Postgres stores it as the literal string "NaN".
+    WarehouseLoader(db_conn, processed_dir).run()
+
+    with db_conn.cursor() as cur:
+        cur.execute("SELECT source_url FROM fact_layoff_event WHERE location = 'Unknown City'")
+        assert cur.fetchone()[0] is None
+        cur.execute("SELECT remote_work FROM fact_survey_response WHERE response_id = 2")
+        assert cur.fetchone()[0] is None
+        cur.execute(
+            "SELECT count(*) FROM fact_survey_response WHERE 'NaN' IN "
+            "(main_branch, age_bucket, ed_level, employment, remote_work, experience_level_canonical)"
+        )
+        assert cur.fetchone()[0] == 0

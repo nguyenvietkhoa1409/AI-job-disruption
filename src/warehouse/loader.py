@@ -78,6 +78,11 @@ def _insert(cur, table: str, columns: list[str], rows: list[tuple], conflict_key
     that specific UNIQUE constraint (used for facts, per section 6)."""
     if not rows:
         return 0
+    # Clean EVERY value, not just the numeric ones: a missing text cell is a
+    # float NaN in pandas, which psycopg2 sends as 'NaN'::float and Postgres
+    # then silently casts to the 4-character string "NaN" in a TEXT column
+    # (seen on real data: 17,237 cells, e.g. remote_work, ed_level, source_url).
+    rows = [tuple(_clean(v) for v in row) for row in rows]
     cols_sql = ", ".join(columns)
     conflict_sql = f"({', '.join(conflict_key)}) " if conflict_key else ""
     sql = f"INSERT INTO {table} ({cols_sql}) VALUES %s ON CONFLICT {conflict_sql}DO NOTHING RETURNING 1"
