@@ -21,16 +21,28 @@ src/
 ├── data_sources/        # BaseDataSource + per-dataset loaders
 ├── quality/              # BaseQualityRuleSet + per-dataset quality rules
 ├── preprocessing/        # BaseTransformer + per-dataset cleaning transforms
-├── feature_engineering/  # BaseFeatureEngineer + per-dataset feature steps
+├── feature_engineering/  # BaseFeatureEngineer + SurveyFeatureEngineer (NMF topics)
 ├── eda/                  # DatasetProfiler, EDAVisualizer
 ├── schema/                # dimension maps + star schema dataclasses
+├── warehouse/loader.py    # WarehouseLoader: processed CSVs -> Postgres star schema
 ├── pipeline.py            # DatasetPipeline: chains the interfaces above
 └── config.py               # ProjectPaths
 
+schema/                    # SQL run by Postgres: 001 dimensions, 002 facts, 003 mart
+airflow/dags/              # warehouse_pipeline_dag.py
 data/{raw,processed,quarantine}/   # not committed, see .gitignore
 reports/{data_dictionary,figures}/
 tests/
+
+run_pipeline.py            # extract/clean/transform all 3 datasets (no database)
+setup_database.py          # apply schema/*.sql; --reset rebuilds from scratch
+validate_sources.py        # smoke test that the raw files load
+docker-compose.yml         # postgres (5432) + airflow standalone (8080)
+Dockerfile.airflow         # Airflow image with this project's dependencies
+requirements-airflow.txt   # DAG-test dependencies (CI dag-integrity job)
 ```
+
+`schema/` (root) holds the SQL that Postgres executes; `src/schema/` is the Python mirror of the same contract (`tests/test_star_schema.py` keeps the two in sync).
 
 ## Setup
 
@@ -67,9 +79,11 @@ The star schema (`schema/001_dimensions.sql`, `002_facts.sql`, `003_mart_country
 
 ```
 cp .env.example .env
-docker compose up -d
+docker compose up -d postgres
 docker compose ps          # wait for postgres to report "healthy"
 ```
+
+(`docker compose up -d` without a service name also builds and starts Airflow, see [Run with Airflow](#run-with-airflow).)
 
 On first startup (empty volume), the postgres image auto-runs every `.sql` file under `schema/` in filename order, so the 8 dimension tables, 4 fact tables, and `mart_country_month` materialized view all exist right away. Verify with:
 
@@ -77,7 +91,9 @@ On first startup (empty volume), the postgres image auto-runs every `.sql` file 
 docker exec -it ai_job_disruption_pg psql -U airflow -d ai_job_disruption -c "\dt" -c "\dm"
 ```
 
-`\dt` lists the 11 tables; `mart_country_month` is a materialized view, so it only shows under `\dm`. Tables are empty until the loader runs. `docker exec` connects inside the container and skips the password; external clients (Python loader, DBeaver) connect to `localhost:5432` with the password from `.env`.
+Replace `airflow` with your `POSTGRES_USER` if you changed it in `.env`. `\dt` lists the 12 tables (8 dimensions + 4 facts); `mart_country_month` is a materialized view, so it only shows under `\dm`. Tables are empty until the loader runs. `docker exec` connects inside the container and skips the password; external clients (Python loader, DBeaver) connect to `localhost:5432` with the password from `.env`.
+
+The auto-run only happens on an empty volume, so a volume created before a schema change keeps the old tables and the loader then fails on missing columns. Rebuild the schema once with `python setup_database.py --reset` (or `docker compose down -v`).
 
 Postgres only reads `POSTGRES_PASSWORD` when it first creates the database. To change it later, edit `.env`, then recreate the volume (this wipes all data):
 
@@ -87,3 +103,62 @@ docker compose up -d
 ```
 
 `.env` holds real local credentials and is gitignored - never commit it. `.env.example` is the template teammates copy from.
+
+## Run the loader
+
+With the raw files in `data/raw/` and Postgres running:
+
+```
+python run_pipeline.py              # steps 1-4 -> data/processed/*.csv (+ survey_topics.csv)
+python setup_database.py            # idempotent; use --reset after any table change (drops all data)
+python -m src.warehouse.loader      # loads dims -> facts -> bridge -> refreshes the mart
+```
+
+The loader runs as one transaction (everything loads or nothing does) and prints the rows inserted per table. Every table has a natural key with `ON CONFLICT DO NOTHING`, so re-running it inserts 0 rows. With the current raw files the first load gives:
+
+| Table | Rows |
+|---|---|
+| dim_country / dim_industry / dim_company / dim_role | 175 / 12 / 2,984 / 57 |
+| dim_ai_sentiment / dim_skill / dim_ai_open_topic | 641 / 91 / 10 |
+| fact_layoff_event / fact_job_posting / fact_survey_response | 4,582 / 1,500 / 49,078 |
+| fact_job_posting_skill | 9,419 |
+
+`mart_country_month` sums to 4,582 layoff events. Because existing rows are never overwritten, a loader fix only reaches rows that were already loaded after `python setup_database.py --reset` and a fresh load (dev database only).
+
+## Run with Airflow
+
+`docker compose up -d` also starts a single-container Airflow (`airflow standalone`) at http://localhost:8080. The DAG `ai_job_disruption_warehouse` runs `extract_transform_{layoffs,ai_jobs,survey}` and `ensure_schema`, then `load_warehouse` as a single transactional task. It is triggered manually (`schedule=None`) and never resets the schema.
+
+```
+docker compose build airflow        # first time, or after requirements.txt changes
+docker compose up -d
+docker logs -f ai_job_disruption_airflow     # wait for "Airflow is ready", then Ctrl+C
+docker exec ai_job_disruption_airflow cat /opt/airflow/standalone_admin_password.txt
+```
+
+Log in as `admin` with that password, or trigger from the CLI:
+
+```
+docker exec ai_job_disruption_airflow airflow dags list-import-errors
+docker exec ai_job_disruption_airflow airflow dags unpause ai_job_disruption_warehouse
+docker exec ai_job_disruption_airflow airflow dags trigger ai_job_disruption_warehouse
+docker exec ai_job_disruption_airflow airflow dags list-runs -d ai_job_disruption_warehouse
+```
+
+The project root is mounted into the container, so the extract tasks write `data/processed/`, `data/quarantine/` and `reports/` on the host. The Airflow image installs `requirements.txt` without Airflow's constraints file (pandas 3.x vs the constraint pin 2.1.4); pip prints a conflict warning for the Google/Snowflake providers, which the DAG does not use.
+
+## Tests
+
+```
+pytest -q
+```
+
+The loader integration tests (`tests/test_warehouse_loader.py`) run only when a Postgres from `.env` is reachable and skip silently otherwise. They **drop and recreate the `public` schema**, so never point `.env` at a database whose data matters; reload afterwards with `python setup_database.py --reset` and `python -m src.warehouse.loader`.
+
+`tests/test_dag_integrity.py` needs `apache-airflow` and is skipped without it. Airflow does not run natively on Windows, so run it the way the CI `dag-integrity` job does, in a Python 3.12 container:
+
+```
+docker run --rm -v "${PWD}:/src:ro" -w /src python:3.12-slim bash -c "pip install -q -r requirements-airflow.txt && pytest -q -p no:cacheprovider tests/test_dag_integrity.py"
+```
+
+CI (`.github/workflows/tests.yml`) runs two jobs: `pytest` (with a `postgres:16` service) and `dag-integrity`.
