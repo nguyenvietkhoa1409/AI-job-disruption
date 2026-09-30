@@ -78,7 +78,8 @@ DIM_DATE = DimTable(
 DIM_COUNTRY = DimTable(
     name="dim_country",
     # continent: enrichment derived from country_converter alongside
-    # COUNTRY_MAP, useful for the layoff trend map tile.
+    # COUNTRY_MAP (dimension_maps.continents_for), filled by the loader;
+    # used by the dashboards' continent filter.
     columns=["country_key", "country_canonical", "continent"],
     natural_key=["country_canonical"],
 )
@@ -225,3 +226,11 @@ FACT_TABLES: list[FactTable] = [
     FACT_SURVEY_RESPONSE,
     FACT_JOB_POSTING_SKILL,
 ]
+
+# --- Operational tables (not part of the star) -------------------------------
+
+# Tables in schema/*.sql that are NOT facts or dimensions. They have no
+# natural key and no column contract here; tests/test_star_schema.py accepts
+# them in the DDL but keeps the "4 fact / 8 dimension" counts above.
+# pipeline_run_log: one row per source per loader run (Dashboard 6 health strip).
+OPS_TABLES: list[str] = ["pipeline_run_log"]

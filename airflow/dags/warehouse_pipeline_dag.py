@@ -1,5 +1,5 @@
 """Warehouse pipeline DAG: extract/transform the 3 datasets, then load the
-star schema and refresh the mart.
+star schema and refresh the marts.
 
 schedule=None (manually triggered): all 3 sources are static snapshots
 (Kaggle layoffs mirror, a fixed AI Jobs Market export, one Stack Overflow
@@ -13,7 +13,7 @@ possible." Imports of src.* are deferred to inside each task body (not at
 module level) so the scheduler can parse this file quickly without paying
 pandas/scikit-learn's import cost on every DAG-folder scan.
 
-load_warehouse is a single task, not four (dims/facts/bridge/mart): the
+load_warehouse is a single task, not four (dims/facts/bridge/marts): the
 whole point of WarehouseLoader.run() is that it wraps all four in one
 Postgres transaction (either everything loads or nothing does) - splitting
 it into separate Airflow tasks would break that guarantee, since each task
@@ -35,7 +35,7 @@ DEFAULT_ARGS = {
 
 @dag(
     dag_id="ai_job_disruption_warehouse",
-    description="Extract/transform the 3 datasets, load the star schema, refresh the mart.",
+    description="Extract/transform the 3 datasets, load the star schema, refresh the marts.",
     schedule=None,
     start_date=dt.datetime(2024, 1, 1),
     catchup=False,

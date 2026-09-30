@@ -12,8 +12,10 @@ from src.schema.dimension_maps import (
     EXPERIENCE_MAP,
     INDUSTRY_MAP,
     INDUSTRY_SECTORS,
+    MULTI_REGION,
     ROLE_CATEGORIES,
     ROLE_MAP,
+    continents_for,
 )
 
 
@@ -80,3 +82,21 @@ def test_experience_map_bare_labels_are_not_keys():
     # would quarantine 100% of rows. EXPERIENCE_MAP's keys must be the raw
     # strings, not the bare bucket names.
     assert not set(EXPERIENCE_LEVELS) & set(EXPERIENCE_MAP.keys())
+
+
+def test_continents_cover_every_canonical_country():
+    # Every canonical country except the non-country bucket resolves to a
+    # continent, so the dashboards' continent filter never drops a real country.
+    countries = sorted(set(COUNTRY_MAP.values()))
+    continents = continents_for(countries)
+    assert set(continents) == set(countries)
+    assert [c for c, cont in continents.items() if not cont] == []
+
+
+def test_multi_region_bucket_gets_its_own_continent_label():
+    assert continents_for([MULTI_REGION, "Germany"]) == {MULTI_REGION: "Multi-region", "Germany": "Europe"}
+
+
+def test_continents_for_single_name_and_empty():
+    assert continents_for(["Germany"]) == {"Germany": "Europe"}
+    assert continents_for([]) == {}

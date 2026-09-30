@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from src.schema.star_schema import DIM_TABLES, FACT_TABLES
+from src.schema.star_schema import DIM_TABLES, FACT_TABLES, OPS_TABLES
 
 SCHEMA_DIR = Path(__file__).resolve().parents[1] / "schema"
 CONSTRAINT_WORDS = {"CHECK", "UNIQUE", "PRIMARY", "CONSTRAINT", "FOREIGN"}
@@ -78,7 +78,12 @@ def test_counts_match_project_target():
 
 
 def test_same_table_names_on_both_sides():
-    assert {t.name for t in ALL_TABLES} == set(DDL)
+    # OPS_TABLES (e.g. pipeline_run_log) live in the DDL but are not star tables.
+    assert {t.name for t in ALL_TABLES} | set(OPS_TABLES) == set(DDL)
+
+
+def test_ops_tables_are_not_star_tables():
+    assert not {t.name for t in ALL_TABLES} & set(OPS_TABLES)
 
 
 @pytest.mark.parametrize("table", ALL_TABLES, ids=lambda t: t.name)

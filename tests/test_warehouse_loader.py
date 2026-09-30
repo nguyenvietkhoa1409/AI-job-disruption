@@ -175,17 +175,219 @@ def test_missing_country_and_industry_load_as_null_fk(db_conn, processed_dir):
     assert industry_key is None
 
 
-def test_mart_refresh_buckets_missing_country_as_unknown(db_conn, processed_dir):
+def _query(conn, sql: str, params=None):
+    with conn.cursor() as cur:
+        cur.execute(sql, params)
+        return cur.fetchall()
+
+
+def _append_layoffs(processed_dir: Path, rows: list[dict]) -> None:
+    path = processed_dir / "layoffs.csv"
+    pd.concat([pd.read_csv(path), pd.DataFrame(rows)], ignore_index=True).to_csv(path, index=False)
+
+
+_FINANCE_LAYOFF = {
+    "company": "Bank Co", "location": "NYC", "date": "3/10/2024", "date_added": "3/11/2024",
+    "percentage_laid_off": 0.05, "total_laid_off": 10, "funds_raised": 1.0, "source": "z",
+    "stage": "Post-IPO", "country_canonical": "United States", "industry_sector": "Finance",
+}
+
+
+def test_mart_buckets_missing_country_and_industry_as_unknown(db_conn, processed_dir):
     WarehouseLoader(db_conn, processed_dir).run()
 
-    with db_conn.cursor() as cur:
-        cur.execute(
-            "SELECT layoff_events FROM mart_country_month WHERE country_canonical = '(Unknown)' AND year = 2024 AND month = 2"
-        )
-        row = cur.fetchone()
+    rows = _query(
+        db_conn,
+        "SELECT layoff_events, total_laid_off_sum, events_with_headcount, pct_laid_off_nonnull_count "
+        "FROM mart_country_industry_month WHERE country_canonical = '(Unknown)' "
+        "AND industry_sector = '(Unknown)' AND month_start = DATE '2024-02-01'",
+    )
 
-    assert row is not None
-    assert row[0] == 1
+    # Widget Co: one event, but neither headcount nor percentage was disclosed.
+    assert rows == [(1, 0, 0, 0)]
+
+
+def test_mart_stores_additive_sums_and_counts_not_averages(db_conn, processed_dir):
+    # Acme SF (Jan, pct 0.10) plus a Jan shutdown with no headcount and a Jan event at pct 0.30.
+    _append_layoffs(processed_dir, [
+        {"company": "Acme", "location": "Austin", "date": "1/20/2024", "date_added": "1/21/2024",
+         "percentage_laid_off": 1.0, "total_laid_off": None, "funds_raised": 500.0, "source": "x",
+         "stage": "Series D", "country_canonical": "United States", "industry_sector": "Technology & Software"},
+        {"company": "Acme", "location": "Denver", "date": "1/25/2024", "date_added": "1/26/2024",
+         "percentage_laid_off": 0.30, "total_laid_off": 20, "funds_raised": 500.0, "source": "y",
+         "stage": "Series D", "country_canonical": "United States", "industry_sector": "Technology & Software"},
+    ])
+    WarehouseLoader(db_conn, processed_dir).run()
+
+    (row,) = _query(
+        db_conn,
+        "SELECT layoff_events, total_laid_off_sum, events_with_headcount, pct_laid_off_sum, "
+        "pct_laid_off_nonnull_count, shutdown_events FROM mart_country_industry_month "
+        "WHERE country_canonical = 'United States' AND stage = 'Series D' AND month_start = DATE '2024-01-01'",
+    )
+
+    events, headcount, with_headcount, pct_sum, pct_n, shutdowns = row
+    assert (events, headcount, with_headcount, pct_n, shutdowns) == (3, 120, 2, 3, 1)
+    assert float(pct_sum) == pytest.approx(1.40)  # 0.10 + 1.0 + 0.30: exact, unlike an average of averages
+
+
+def test_comparison_window_follows_ai_jobs_posting_dates(db_conn, processed_dir):
+    WarehouseLoader(db_conn, processed_dir).run()
+
+    # Postings are 2024-03 and 2024-04 in the fixture.
+    assert _query(db_conn, "SELECT start_date, end_date FROM vw_comparison_window") == [
+        (pd.Timestamp("2024-03-01").date(), pd.Timestamp("2024-04-30").date())
+    ]
+
+
+def test_industry_overview_uses_window_and_keeps_no_data_as_null(db_conn, processed_dir):
+    _append_layoffs(processed_dir, [_FINANCE_LAYOFF])
+    WarehouseLoader(db_conn, processed_dir).run()
+
+    rows = {r[0]: r[1:] for r in _query(
+        db_conn,
+        "SELECT industry_sector, layoff_events, total_laid_off, job_postings, survey_responses, "
+        "ai_threat_answered_n, ai_threat_yes_n FROM mart_industry_overview",
+    )}
+
+    # Technology: only Acme NYC (3/1) is inside the Mar-Apr window; Acme SF (Jan) is not.
+    assert rows["Technology & Software"] == (1, 50, 2, 1, 1, 0)
+    # Finance: a layoff in the window but no AI postings and no survey rows -> NULL, not 0.
+    assert rows["Finance"] == (1, 10, None, None, None, None)
+
+
+def test_overview_marts_keep_undisclosed_headcount_as_null_not_zero(db_conn, processed_dir):
+    _append_layoffs(processed_dir, [
+        {"company": "Edu Co", "location": "Boston", "date": "3/12/2024", "date_added": "3/13/2024",
+         "percentage_laid_off": 0.5, "total_laid_off": None, "funds_raised": 1.0, "source": "e",
+         "stage": "Seed", "country_canonical": "Canada", "industry_sector": "Education"},
+    ])
+    WarehouseLoader(db_conn, processed_dir).run()
+
+    # One event in the window, but nobody disclosed a headcount: "no data", not "0 laid off".
+    assert _query(
+        db_conn,
+        "SELECT layoff_events, total_laid_off, events_with_headcount FROM mart_industry_overview "
+        "WHERE industry_sector = 'Education'",
+    ) == [(1, None, 0)]
+
+
+def test_country_overview_is_restricted_to_ai_jobs_countries_with_continent(db_conn, processed_dir):
+    WarehouseLoader(db_conn, processed_dir).run()
+
+    rows = _query(
+        db_conn,
+        "SELECT country_canonical, continent, job_postings, median_salary_usd, layoff_events "
+        "FROM mart_country_overview",
+    )
+
+    assert [(r[0], r[2], float(r[3]), r[4]) for r in rows] == [("United States", 2, 185000.0, 1)]
+    assert rows[0][1] is not None  # continent is filled, not NULL
+
+
+def test_share_gap_only_covers_sectors_present_in_both_sources(db_conn, processed_dir):
+    _append_layoffs(processed_dir, [_FINANCE_LAYOFF])
+    WarehouseLoader(db_conn, processed_dir).run()
+
+    rows = _query(
+        db_conn,
+        "SELECT industry_sector, layoff_share, posting_share, share_gap_pp FROM mart_sector_share_gap",
+    )
+
+    # Finance has layoffs but no AI postings, so it is excluded; Technology is
+    # the only shared sector, so both shares renormalise to 1 and the gap is 0.
+    assert [(r[0], float(r[1]), float(r[2]), float(r[3])) for r in rows] == [
+        ("Technology & Software", 1.0, 1.0, 0.0)
+    ]
+
+
+def test_country_continent_is_backfilled_when_previously_null(db_conn, processed_dir):
+    WarehouseLoader(db_conn, processed_dir).run()
+    with db_conn.cursor() as cur:
+        cur.execute("UPDATE dim_country SET continent = NULL")  # state of a database loaded before the fix
+    db_conn.commit()
+
+    WarehouseLoader(db_conn, processed_dir).run()
+
+    assert _query(db_conn, "SELECT count(*) FROM dim_country WHERE continent IS NULL") == [(0,)]
+
+
+def test_layoff_event_view_orders_stages_and_flags_shutdowns(db_conn, processed_dir):
+    WarehouseLoader(db_conn, processed_dir).run()
+
+    rows = {r[0]: r[1:] for r in _query(
+        db_conn, "SELECT stage, stage_order, is_shutdown FROM vw_layoff_event"
+    )}
+
+    assert rows["Seed"][0] < rows["Series D"][0] < rows["Post-IPO"][0]
+    assert rows["Series D"][1] is False
+    assert rows["Seed"][1] is None  # Widget Co disclosed no percentage: unknown, not False
+
+
+def test_sentiment_profile_derives_scores_and_topic_kind(db_conn, processed_dir):
+    WarehouseLoader(db_conn, processed_dir).run()
+
+    rows = _query(
+        db_conn,
+        "SELECT ai_threat_yes, ai_sent_score, ai_acc_score, ai_adopter, topic_label, topic_kind "
+        "FROM vw_sentiment_profile WHERE survey_year = 2025 ORDER BY response_key",
+    )
+
+    # Response 1: AIThreat 'No', 'Favorable' -> 4, the fixture's 'High' trust is not a real
+    # survey answer -> NULL score, AISelect 'Yes' is not a frequency answer ('Yes, ...')
+    # -> not an adopter, and topic 0 is a stance topic.
+    assert rows[0] == (False, 4, None, False, "AI capability skepticism", "stance")
+    assert rows[1][4:] == (None, None)  # no topic for the second respondent
+
+
+def test_role_salary_view_keeps_datasets_separate(db_conn, processed_dir):
+    WarehouseLoader(db_conn, processed_dir).run()
+
+    rows = _query(db_conn, "SELECT dataset, count(*) FROM vw_role_salary GROUP BY dataset ORDER BY dataset")
+
+    # 2 AI Jobs postings; 1 survey respondent with compensation (response 2 has none).
+    assert rows == [("AI Jobs", 2), ("Survey", 1)]
+
+
+def test_skill_views(db_conn, processed_dir):
+    WarehouseLoader(db_conn, processed_dir).run()
+
+    leaderboard = {r[0]: r[1] for r in _query(db_conn, "SELECT skill_name, postings FROM vw_skill_leaderboard")}
+    assert leaderboard == {"Python": 2, "Cloud": 1, "SQL": 1}
+
+    share = {r[0]: float(r[1]) for r in _query(db_conn, "SELECT skill_name, pct_of_category FROM vw_skill_category")}
+    assert share == {"Python": 1.0, "Cloud": 0.5, "SQL": 0.5}
+
+
+def test_topic_cross_view_counts_respondents_with_a_topic(db_conn, processed_dir):
+    WarehouseLoader(db_conn, processed_dir).run()
+
+    assert _query(db_conn, "SELECT topic_label, role_category, ai_threat, responses FROM vw_topic_cross") == [
+        ("AI capability skepticism", "Traditional", "No", 1)
+    ]
+
+
+def test_run_log_records_each_source_and_appends_on_rerun(db_conn, processed_dir, tmp_path):
+    quarantine_dir = tmp_path / "quarantine"
+    quarantine_dir.mkdir()
+    pd.DataFrame({"company": ["Bad Co", "Worse Co"], "quarantine_reason": ["r1", "r2"]}).to_csv(
+        quarantine_dir / "layoffs.csv", index=False
+    )
+
+    WarehouseLoader(db_conn, processed_dir, quarantine_dir).run()
+    first = _query(
+        db_conn,
+        "SELECT source, rows_clean, rows_quarantined, rows_inserted FROM pipeline_run_log ORDER BY source",
+    )
+    assert first == [("ai_jobs", 2, 0, 2), ("layoffs", 3, 2, 3), ("survey", 2, 0, 2)]
+
+    WarehouseLoader(db_conn, processed_dir, quarantine_dir).run()
+    second = _query(
+        db_conn,
+        "SELECT source, rows_inserted FROM pipeline_run_log ORDER BY run_log_key DESC LIMIT 3",
+    )
+    assert _table_count(db_conn, "pipeline_run_log") == 6  # append-only history
+    assert {(s, n) for s, n in second} == {("layoffs", 0), ("ai_jobs", 0), ("survey", 0)}
 
 
 def test_missing_text_values_load_as_null_not_nan_string(db_conn, processed_dir):

@@ -20,7 +20,7 @@ The remainder of this document details stage 3 (dataset analysis) and stage 4 (d
 
 **1\. A public GitHub repository** containing the full OOP Python codebase (data\_sources, quality, preprocessing, feature\_engineering, eda, schema, pipeline.py, config.py), a Docker Compose setup for Postgres, automated tests, and CI configuration.
 
-**2\. A working PostgreSQL data warehouse** with the star schema populated (4 fact tables, 8 dimension tables) and a mart\_country\_month materialized view for fast dashboard queries.
+**2\. A working PostgreSQL data warehouse** with the star schema populated (4 fact tables, 8 dimension tables) and materialized marts (mart\_country\_industry\_month, mart\_industry\_overview, mart\_country\_overview, mart\_sector\_share\_gap) plus dashboard views for fast dashboard queries.
 
 **3\. A BI dashboard** (Power BI; see reports/dashboard/dashboard_spec.md) built on the warehouse, covering the layoff trend map, the emerging versus traditional role salary comparison, and the developer sentiment profile by cohort (the survey is a single 2025 wave, so it cannot show a trend over time).
 

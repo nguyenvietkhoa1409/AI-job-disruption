@@ -80,6 +80,24 @@ def _build_country_map() -> dict[str, str]:
 
 COUNTRY_MAP: dict[str, str] = _build_country_map()
 
+# dim_country.continent. country_converter derives it from the same short
+# names COUNTRY_MAP produces; its scheme lumps North and South America into
+# "America". The non-country bucket is not a place, so it gets its own label
+# (otherwise a continent filter on the geography grid would drop that row).
+MULTI_REGION = "Multi-region / Remote"
+_CONTINENT_OVERRIDES = {MULTI_REGION: "Multi-region"}
+
+
+def continents_for(countries: list[str]) -> dict[str, str | None]:
+    """Canonical country name -> continent; None where the library has no answer."""
+    lookup = [c for c in countries if c not in _CONTINENT_OVERRIDES]
+    converted = coco.convert(names=lookup, to="continent", not_found=None) if lookup else []
+    if isinstance(converted, str):  # coco returns a bare string for a single name
+        converted = [converted]
+    result: dict[str, str | None] = dict(zip(lookup, converted))
+    result.update({c: _CONTINENT_OVERRIDES[c] for c in countries if c in _CONTINENT_OVERRIDES})
+    return result
+
 # 12-sector taxonomy loosely inspired by NAICS top-level groupings, sized to
 # what these three datasets actually need (not NAICS's full 1000+ codes).
 # "Other" is a deliberate catch-all for small/ambiguous raw categories

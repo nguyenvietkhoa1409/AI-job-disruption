@@ -2,7 +2,7 @@
 
 Implements the loader contract from the stage-4 schema proposal (section 6):
 one transaction, dimensions before facts before the skill bridge before the
-mart refresh, `ON CONFLICT DO NOTHING` everywhere so re-running the loader
+mart refresh (all of MARTS) and the pipeline_run_log row per source, `ON CONFLICT DO NOTHING` everywhere so re-running the loader
 on the same processed files never duplicates rows. Column lists and natural
 keys are never hard-coded here - they come from src.schema.star_schema, so
 the DDL, the Python contract and the loader cannot drift from each other
@@ -30,6 +30,7 @@ import psycopg2.extras
 
 from src.config import PROJECT_PATHS
 from src.feature_engineering.survey_feature_engineer import MODEL_VERSION
+from src.schema.dimension_maps import continents_for
 from src.schema.star_schema import (
     DIM_AI_OPEN_TOPIC,
     DIM_AI_SENTIMENT,
@@ -45,6 +46,23 @@ from src.schema.star_schema import (
 )
 
 SURVEY_YEAR = 2025  # set explicitly (section 6): the survey has no per-row year of its own.
+
+# Materialized views to refresh after a load, in dependency order. Each has a
+# unique index (schema/003, 004), which REFRESH ... CONCURRENTLY requires.
+MARTS = (
+    "mart_country_industry_month",
+    "mart_industry_overview",
+    "mart_country_overview",
+    "mart_sector_share_gap",
+)
+
+# Processed/quarantine CSV name -> fact table that source loads into, for the
+# pipeline_run_log health strip.
+RUN_LOG_SOURCES = {
+    "layoffs": FACT_LAYOFF_EVENT.name,
+    "ai_jobs": FACT_JOB_POSTING.name,
+    "survey": FACT_SURVEY_RESPONSE.name,
+}
 
 
 def connect():
@@ -103,12 +121,23 @@ def _lookup(cur, table: str, key_columns: list[str], surrogate_column: str) -> d
 
 
 class WarehouseLoader:
-    def __init__(self, conn, processed_dir: Path | None = None):
+    def __init__(self, conn, processed_dir: Path | None = None, quarantine_dir: Path | None = None):
         self.conn = conn
         self.processed_dir = processed_dir or PROJECT_PATHS.data_processed
+        self.quarantine_dir = quarantine_dir or PROJECT_PATHS.data_quarantine
 
     def _read(self, name: str) -> pd.DataFrame:
         return pd.read_csv(self.processed_dir / f"{name}.csv")
+
+    def _quarantined_rows(self, name: str) -> int:
+        """Row count of data/quarantine/<name>.csv; 0 if it is missing or empty."""
+        path = self.quarantine_dir / f"{name}.csv"
+        if not path.exists():
+            return 0
+        try:
+            return len(pd.read_csv(path))
+        except pd.errors.EmptyDataError:
+            return 0
 
     def run(self) -> dict[str, int]:
         """Load everything in one transaction: either it all applies, or
@@ -128,7 +157,11 @@ class WarehouseLoader:
                 lookups = self._build_lookups(cur)
                 counts.update(self._load_facts(cur, layoffs, ai_jobs, survey, lookups))
                 counts["fact_job_posting_skill"] = self._load_bridge(cur, ai_jobs)
-                self._refresh_mart(cur)
+                self._refresh_marts(cur)
+                # After the counts are final, and deliberately not part of
+                # them: the log is append-only history, so a repeat run adds
+                # rows here while every table in `counts` stays at 0.
+                self._log_run(cur, {"layoffs": layoffs, "ai_jobs": ai_jobs, "survey": survey}, counts)
         return counts
 
     # --- dimensions -----------------------------------------------------
@@ -139,7 +172,13 @@ class WarehouseLoader:
             | set(ai_jobs["country_canonical"].dropna())
             | set(survey["country_canonical"].dropna())
         )
-        n_country = _insert(cur, DIM_COUNTRY.name, ["country_canonical", "continent"], [(c, None) for c in countries])
+        continents = continents_for(countries)
+        n_country = _insert(
+            cur, DIM_COUNTRY.name, ["country_canonical", "continent"], [(c, continents[c]) for c in countries]
+        )
+        # Inserts never overwrite, so a database loaded before continent was
+        # filled keeps NULLs; fill only those (never replaces an existing value).
+        self._backfill_continents(cur, continents)
 
         industries = sorted(
             set(layoffs["industry_sector"].dropna())
@@ -186,6 +225,19 @@ class WarehouseLoader:
             DIM_SKILL.name: n_skill,
             DIM_AI_OPEN_TOPIC.name: n_topic,
         }
+
+    @staticmethod
+    def _backfill_continents(cur, continents: dict[str, str | None]) -> None:
+        pairs = [(country, continent) for country, continent in continents.items() if continent]
+        if not pairs:
+            return
+        psycopg2.extras.execute_values(
+            cur,
+            f"UPDATE {DIM_COUNTRY.name} AS c SET continent = v.continent "
+            "FROM (VALUES %s) AS v(country_canonical, continent) "
+            "WHERE c.country_canonical = v.country_canonical AND c.continent IS NULL",
+            pairs,
+        )
 
     def _build_lookups(self, cur) -> dict[str, dict]:
         return {
@@ -310,16 +362,28 @@ class WarehouseLoader:
 
         return _insert(cur, FACT_JOB_POSTING_SKILL.name, ["job_posting_key", "skill_key"], bridge_rows, conflict_key=FACT_JOB_POSTING_SKILL.natural_key)
 
-    def _refresh_mart(self, cur) -> None:
-        cur.execute("REFRESH MATERIALIZED VIEW CONCURRENTLY mart_country_month")
+    def _refresh_marts(self, cur) -> None:
+        for mart in MARTS:
+            cur.execute(f"REFRESH MATERIALIZED VIEW CONCURRENTLY {mart}")
+
+    def _log_run(self, cur, frames: dict[str, pd.DataFrame], counts: dict[str, int]) -> None:
+        rows = [
+            (source, len(df), self._quarantined_rows(source), counts[RUN_LOG_SOURCES[source]])
+            for source, df in frames.items()
+        ]
+        psycopg2.extras.execute_values(
+            cur,
+            "INSERT INTO pipeline_run_log (source, rows_clean, rows_quarantined, rows_inserted) VALUES %s",
+            rows,
+        )
 
 
-def run_full_load(processed_dir: Path | None = None) -> dict[str, int]:
+def run_full_load(processed_dir: Path | None = None, quarantine_dir: Path | None = None) -> dict[str, int]:
     """Entry point for callers that just want "load everything, print
     counts" without managing the connection themselves (CLI, Airflow task)."""
     conn = connect()
     try:
-        return WarehouseLoader(conn, processed_dir).run()
+        return WarehouseLoader(conn, processed_dir, quarantine_dir).run()
     finally:
         conn.close()
 

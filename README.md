@@ -28,7 +28,7 @@ src/
 ├── pipeline.py            # DatasetPipeline: chains the interfaces above
 └── config.py               # ProjectPaths
 
-schema/                    # SQL run by Postgres: 001 dimensions, 002 facts, 003 mart
+schema/                    # SQL run by Postgres: 001 dimensions, 002 facts, 003-004 marts, 005 views, 006 pipeline_run_log
 airflow/dags/              # warehouse_pipeline_dag.py
 data/{raw,processed,quarantine}/   # not committed, see .gitignore
 reports/{data_dictionary,figures}/
@@ -75,7 +75,7 @@ python validate_sources.py
 
 ## Database (Docker + PostgreSQL)
 
-The star schema (`schema/001_dimensions.sql`, `002_facts.sql`, `003_mart_country_month.sql`) runs on a local PostgreSQL container.
+The star schema (`schema/001_dimensions.sql`, `002_facts.sql`, `003_mart_country_industry_month.sql`, `004_marts.sql`, `005_views.sql`, `006_pipeline_run_log.sql`) runs on a local PostgreSQL container.
 
 ```
 cp .env.example .env
@@ -85,13 +85,13 @@ docker compose ps          # wait for postgres to report "healthy"
 
 (`docker compose up -d` without a service name also builds and starts Airflow, see [Run with Airflow](#run-with-airflow).)
 
-On first startup (empty volume), the postgres image auto-runs every `.sql` file under `schema/` in filename order, so the 8 dimension tables, 4 fact tables, and `mart_country_month` materialized view all exist right away. Verify with:
+On first startup (empty volume), the postgres image auto-runs every `.sql` file under `schema/` in filename order, so the 8 dimension tables, 4 fact tables, the `pipeline_run_log` table, 4 materialized views (`mart_country_industry_month`, `mart_industry_overview`, `mart_country_overview`, `mart_sector_share_gap`) and the dashboard views (`vw_*`) all exist right away. Verify with:
 
 ```
 docker exec -it ai_job_disruption_pg psql -U airflow -d ai_job_disruption -c "\dt" -c "\dm"
 ```
 
-Replace `airflow` with your `POSTGRES_USER` if you changed it in `.env`. `\dt` lists the 12 tables (8 dimensions + 4 facts); `mart_country_month` is a materialized view, so it only shows under `\dm`. Tables are empty until the loader runs. `docker exec` connects inside the container and skips the password; external clients (Python loader, DBeaver) connect to `localhost:5432` with the password from `.env`.
+Replace `airflow` with your `POSTGRES_USER` if you changed it in `.env`. `\dt` lists 13 tables (8 dimensions + 4 facts + the operational `pipeline_run_log`); the marts are materialized views, so they only show under `\dm`, and the `vw_*` views under `\dv`. Tables are empty until the loader runs. `docker exec` connects inside the container and skips the password; external clients (Python loader, DBeaver) connect to `localhost:5432` with the password from `.env`.
 
 The auto-run only happens on an empty volume, so a volume created before a schema change keeps the old tables and the loader then fails on missing columns. Rebuild the schema once with `python setup_database.py --reset` (or `docker compose down -v`).
 
@@ -111,7 +111,7 @@ With the raw files in `data/raw/` and Postgres running:
 ```
 python run_pipeline.py              # steps 1-4 -> data/processed/*.csv (+ survey_topics.csv)
 python setup_database.py            # idempotent; use --reset after any table change (drops all data)
-python -m src.warehouse.loader      # loads dims -> facts -> bridge -> refreshes the mart
+python -m src.warehouse.loader      # loads dims -> facts -> bridge -> refreshes the marts -> logs the run
 ```
 
 The loader runs as one transaction (everything loads or nothing does) and prints the rows inserted per table. Every table has a natural key with `ON CONFLICT DO NOTHING`, so re-running it inserts 0 rows. With the current raw files the first load gives:
@@ -123,7 +123,7 @@ The loader runs as one transaction (everything loads or nothing does) and prints
 | fact_layoff_event / fact_job_posting / fact_survey_response | 4,582 / 1,500 / 49,078 |
 | fact_job_posting_skill | 9,419 |
 
-`mart_country_month` sums to 4,582 layoff events. Because existing rows are never overwritten, a loader fix only reaches rows that were already loaded after `python setup_database.py --reset` and a fresh load (dev database only).
+`mart_country_industry_month` sums to 4,582 layoff events. Because existing rows are never overwritten, a loader fix only reaches rows that were already loaded after `python setup_database.py --reset` and a fresh load (dev database only).
 
 ## Run with Airflow
 
