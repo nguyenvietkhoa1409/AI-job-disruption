@@ -22,7 +22,7 @@ The remainder of this document details stage 3 (dataset analysis) and stage 4 (d
 
 **2\. A working PostgreSQL data warehouse** with the star schema populated (4 fact tables, 8 dimension tables) and a mart\_country\_month materialized view for fast dashboard queries.
 
-**3\. A BI dashboard** (Looker Studio or Power BI) built on the warehouse, covering the layoff trend map, the emerging versus traditional role salary comparison, and the developer sentiment trend.
+**3\. A BI dashboard** (Power BI; see reports/dashboard/dashboard_spec.md) built on the warehouse, covering the layoff trend map, the emerging versus traditional role salary comparison, and the developer sentiment profile by cohort (the survey is a single 2025 wave, so it cannot show a trend over time).
 
 **4\. A topic model output** for the AIOpen free text field: labeled topics with example terms, feeding into the insight report as the "what skills survive AI" narrative thread.
 
