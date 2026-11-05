@@ -9,7 +9,7 @@ Since 2020 the technology industry has gone through repeated waves of layoffs, a
 
 Public data can answer each question, but only separately: layoff trackers cover the first, job postings the second, and developer surveys the last two. Read in isolation, no single source can say whether the pieces fit together, for example whether the sectors that cut the most are also the ones hiring AI talent or worrying the most. This project therefore aims for one comprehensive picture. It combines three public datasets, about 55,000 records in total, in a single PostgreSQL warehouse and presents them side by side in a five-dashboard Power BI report.
 
-**Authors:** Viet Khoa Nguyen and Mai Anh Tieu
+**Authors:** [Viet Khoa Nguyen](https://github.com/nguyenvietkhoa1409) and [Mai Anh Tieu](https://github.com/maianhtieu87)
 
 ## Overview
 
@@ -83,7 +83,7 @@ The system operates as an **eight-layer** batch data pipeline (Figure 1). Three 
 
 Next, the **processed files (5)** are loaded into a **PostgreSQL star schema** through a single atomic transaction **(6)**, so a load either completes or leaves the database untouched. A **data mart (7)** then computes materialized views for the map visualizations. In the **presentation layer (8)**, Power BI queries the warehouse and the mart with SQL to drive the dashboards and the insight report. **Apache Airflow** orchestrates layers **(4) through (7)** inside **Docker Compose**, which also hosts PostgreSQL.
 
-![End-to-end architecture](reports/figures/architecture.png)
+![End-to-end architecture](materials/image_1.png)
 
 *Figure 1. End-to-end architecture from the public sources to the BI layer. Rejected rows go to a quarantine area, and topic modeling applies to the survey only.*
 
@@ -134,7 +134,7 @@ Layoffs, job postings and survey responses are recorded at different levels of d
 - **Bridge table for skills.** Each posting's skill list is split into 9,419 posting-skill pairs, so skills can be joined efficiently.
 - **Precomputed mart.** A 789-row materialized view holds layoffs by country and month and adds up to exactly the 4,582 base events.
 
-![Entity-relationship diagram of the warehouse](reports/figures/erd.png)
+![Entity-relationship diagram of the warehouse](materials/image_2.png)
 
 *Figure 2. Entity-relationship diagram: 8 dimension tables, 4 fact tables and 1 summary view.*
 
@@ -149,7 +149,7 @@ The loader writes all tables in one transaction and skips rows that already exis
 
 One survey question asks which skills developers expect AI not to replace. Of the 49,191 respondents, 22,540 wrote an answer and 22,511 passed the quality and spam checks. Answers of four words or fewer (30.3%) say too little to classify, which leaves 15,698 answers for the model. Each answer is converted into TF-IDF vectors, which weight words by how distinctive they are, and non-negative matrix factorization (NMF) then factors them into ten topics. Every answer is assigned to the topic where it scores highest.
 
-![Topic modeling workflow](reports/figures/topic_model_workflow.png)
+![Topic modeling workflow](materials/image_3.png)
 
 *Figure 3. From raw text to dimensional topic assignments. Dashed borders mark filtered records; the red node is the automatic halt on a label mismatch.*
 
@@ -201,7 +201,7 @@ Three conventions keep the numbers honest:
 
 The sections that follow take each question in turn.
 
-![Overview dashboard](reports/figures/dash_overview.png)
+![Overview dashboard](materials/db_1.png)
 
 *Figure 4. Overview dashboard: workforce reductions, emerging roles and practitioner sentiment, with a sector grid and a dot plot of AI-threat rates.*
 
@@ -214,11 +214,11 @@ The sections that follow take each question in turn.
 - **Sector size is not sector depth.** Retail & Consumer lost the most people (293,000, or 32%), followed by Technology & Software (177,000, or 19%), but most sectors cut a median of 15% to 22% of their staff.
 - **Young companies close, they do not just shrink.** The median Seed-stage layoff removes **100%** of staff, against 10% after an IPO, largely because about three in four Seed events are shutdowns.
 
-![Layoffs dashboard, when and where](reports/figures/dash_layoffs_when_where.png)
+![Layoffs dashboard, when and where](materials/db_2a.png)
 
 *Figure 5. Layoffs dashboard (when and where): monthly trend by continent, geographic distribution and sector severity.*
 
-![Layoffs dashboard, who cut most](reports/figures/dash_layoffs_who.png)
+![Layoffs dashboard, who cut most](materials/db_2b.png)
 
 *Figure 6. Layoffs dashboard (who cut most): median reduction by funding stage, shutdown share by year and the weight of the ten largest events.*
 
@@ -232,11 +232,11 @@ The sections that follow take each question in turn.
 
 *Caution:* outside AI Engineering each family has only 50 to 127 postings, and its growth and demand figures come with the dataset, so we read them as directions and not as precise measurements.
 
-![Role and creation dashboard, roles and pay](reports/figures/dash_roles_pay.png)
+![Role and creation dashboard, roles and pay](materials/db_3a.png)
 
 *Figure 7. Role and Creation dashboard (roles and pay): role families by median salary against demand, and pay by title, education and experience.*
 
-![Role and creation dashboard, skills](reports/figures/dash_roles_skills.png)
+![Role and creation dashboard, skills](materials/db_3b.png)
 
 *Figure 8. Role and Creation dashboard (skills): which skills define which role families.*
 
@@ -250,7 +250,7 @@ The sections that follow take each question in turn.
 
 *Caution:* respondents chose to take the survey, so the reported intervals understate the true uncertainty.
 
-![Sentiment dashboard](reports/figures/dash_sentiment.png)
+![Sentiment dashboard](materials/db_4.png)
 
 *Figure 9. Sentiment dashboard: favorability, trust, perceived automation threat and the skills expected to remain valuable.*
 
@@ -267,7 +267,7 @@ The three sources share only sector and role-family categories, so this page che
 
 The data therefore support a narrower claim than a single story: *no one sector pattern fits cuts, hiring and worry at the same time.*
 
-![Cross-source dashboard](reports/figures/dash_cross_source.png)
+![Cross-source dashboard](materials/db_5.png)
 
 *Figure 10. Cross-source dashboard: sector-level cuts against AI postings, and role-family demand growth against practitioner threat perception.*
 
