@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cross-source dashboard · AI Job Market Disruption</title>
+  <meta name="description" content="Power BI Cross-source dashboard: do the sectors and role families with the largest cuts also show the most AI hiring and the most worry? Skills, role families and sectors read across the three sources.">
+  <meta property="og:title" content="Cross-source dashboard: what is being cut, created and feared, do they line up?">
+  <meta property="og:image" content="https://nguyenvietkhoa1409.github.io/AI-job-disruption/dashboards/cross-source/img/full.webp">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <link rel="stylesheet" href="../../assets/css/dashboard.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar__inner">
+    <a class="brand" href="../../">AI Job Disruption</a>
+    <nav class="nav" aria-label="Sections">
+      <a href="../../#pipeline">Pipeline</a>
+      <a href="../../#warehouse">Warehouse</a>
+      <a href="../../#dashboards">Dashboards</a>
+      <a href="../../#findings">Findings</a>
+    </nav>
+    <a class="btn btn--small" href="https://github.com/nguyenvietkhoa1409/AI-job-disruption">GitHub</a>
+  </div>
+</header>
+
+<main>
+
+<section class="hero dash-hero">
+  <div class="wrap">
+    <p class="crumbs"><a href="../../">Home</a><span>/</span><a href="../../#dashboards">Dashboards</a><span>/</span>Cross-source</p>
+    <p class="eyebrow">Dashboard 5 of 5 · All three sources</p>
+    <h1>What is being cut, created and feared: do they line up?</h1>
+    <p class="lede">Do sectors with the largest cuts also show the most AI hiring and the most worry? The three sources share only sector and role-family categories, with no company-level link, so this page tests alignment at that coarse level and cannot test causation.</p>
+    <div class="chips"><span>Basis:</span>
+      <span class="chip">Window 2025-01 to 2026-03</span><span class="chip">Sectors present in both sources</span><span class="chip">Matched role families and skills</span>
+    </div>
+    <dl class="kpis kpis--dash">
+      <div class="kpi"><dt>Tech &amp; Retail, share of cuts</dt><dd>66%</dd><span>of layoff headcount in the nine sectors</span></div>
+      <div class="kpi"><dt>Tech &amp; Retail, share of postings</dt><dd>17%</dd><span>of AI postings in the same sectors</span></div>
+      <div class="kpi"><dt>Rank correlation, layoffs vs threat</dt><dd>≈ 0.28</dd><span>across nine sectors · not significant</span></div>
+      <div class="kpi"><dt>Matched skills that keep their rank</dt><dd>1 of 4</dd><span>Business &amp; domain understanding</span></div>
+    </dl>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="panel-head">
+      <h2>The dashboard</h2>
+      <p>The page as it appears in Power BI, with no filters applied. Click to enlarge. Each chart is broken out below.</p>
+    </div>
+    <figure class="figure full-fig zoomable">
+      <img src="img/full.webp" width="1920" height="1081"
+           alt="Full Cross-source dashboard: skill ranks in developers' answers against AI postings, threat and demand growth by role family, AI-threat rate against layoffs by sector, and each sector's share of layoffs minus its share of postings.">
+    </figure>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="wrap">
+
+    <article class="chart" id="share-gap">
+      <figure class="static-fig zoomable">
+        <img src="img/share-gap.webp" width="1375" height="839" loading="lazy"
+             alt="Share gap by sector, percentage points of layoff headcount minus percentage of AI postings: Technology &amp; Software +25.8, Retail &amp; Consumer +22.8, Other +5.7, Finance −4.2, Energy −7.5, Media &amp; Marketing −7.6, Education −8.4, Healthcare −9.9, Manufacturing &amp; Industrial −16.7.">
+      </figure>
+      <div class="chart__text">
+        <p class="chart__q">Chart 1 · Cuts against hiring</p>
+        <h2>Which sectors carry more of the cuts than of the postings?</h2>
+        <p>A sector's share of layoff headcount in the window minus its share of AI postings, in percentage points. Purple = more of the cuts; navy = more of the postings.</p>
+        <div class="insight">
+          <p>Cuts and AI hiring diverge. Technology &amp; Software holds <b>33.6%</b> of the cuts but <b>7.8%</b> of the postings; Manufacturing &amp; Industrial is the reverse (<b>−16.7</b> points). Combined, Technology and Retail carry 66% of the headcount but 17% of the postings (63% and 15.8% across all sectors).</p>
+        </div>
+        <p class="howto">The postings sample covers AI roles only and its sector mix is nearly flat (7–17%), so the gaps partly reflect that design.</p>
+      </div>
+    </article>
+
+    <article class="chart" id="sector-threat">
+      <figure class="static-fig zoomable">
+        <img src="img/sector-threat.webp" width="1375" height="644" loading="lazy"
+             alt="AI-threat rate by sector against people laid off in the window on a log scale, bubble size = AI postings, with 95% ranges: Media &amp; Marketing about 18% is the only sector clearly above the 14.9% line; Technology and Retail, with the most layoffs, sit on the line.">
+      </figure>
+      <div class="chart__text">
+        <p class="chart__q">Chart 2 · Cuts against worry</p>
+        <h2>Do the sectors with the most layoffs worry more about AI?</h2>
+        <p>Each bubble is a sector: people laid off in the window across (log scale), the share of developers who see AI as a threat up, with the 95% range as a line. Bubble size = AI postings; dashed = overall 14.9%.</p>
+        <div class="insight">
+          <p>Cuts and worry diverge. Only <b>Media &amp; Marketing</b> is clearly above the overall rate; Technology and Retail, the largest cutters, sit at the average. Across the nine sectors the rank correlation between layoffs and threat is about <b>0.28</b>, which is not significant.</p>
+        </div>
+        <p class="howto">Layoff events are company decisions and survey answers are individual views, so a sector-level comparison cannot say whether one drives the other.</p>
+      </div>
+    </article>
+
+    <article class="chart" id="role-families">
+      <figure class="static-fig zoomable">
+        <img src="img/role-families.webp" width="1495" height="847" loading="lazy"
+             alt="Matched role families: share who feel threatened by AI with 95% ranges, next to yearly demand growth. AI Engineering 19.8% threat and +40.2% growth, Data Science 13.2% and +31.5%, Business 24.4% and +17.1%; the rest between 12% and 16% threat and +17% to +20% growth.">
+      </figure>
+      <div class="chart__text">
+        <p class="chart__q">Chart 3 · Growth against worry</p>
+        <h2>Do developers in fast-growing role families worry less about AI?</h2>
+        <p>For each role family matched between the survey and the postings: the share of developers who feel threatened by AI (95% range as a line, dashed = overall 14.9%), next to the family's demand growth a year.</p>
+        <div class="insight">
+          <p>Growth and worry diverge. The fastest-growing matched family, <b>AI Engineering</b> (+40.2% a year), reports <b>19.8%</b> threat against 14.9% overall, while Data Science (13.2%, +31.5%) is in line. Business, among the slowest-growing, is also clearly above (24.4%).</p>
+        </div>
+        <p class="howto">Demand growth is a field supplied with the postings dataset, read directionally.</p>
+      </div>
+    </article>
+
+    <article class="chart" id="skills-rank">
+      <figure class="static-fig zoomable">
+        <img src="img/skills-rank.webp" width="1495" height="636" loading="lazy"
+             alt="Four matched skills ranked in developers' answers and in AI postings: Problem solving 23.3% and 1st for developers, 20.9% and 2nd in postings; System &amp; architecture design 2nd against 4th; Business &amp; domain understanding 3rd in both; Communication &amp; leadership 4th for developers (7.2%) but 1st in postings (46.8%).">
+      </figure>
+      <div class="chart__text">
+        <p class="chart__q">Chart 4 · Skills</p>
+        <h2>Do developers and AI postings value the same skills?</h2>
+        <p>Four skill themes matched between the developers' free-text answers and the AI postings, with their rank in each. A red ring marks ranks that differ by two places or more.</p>
+        <div class="insight">
+          <p>Skills only partly agree. Of the four matched skills, only <b>business and domain understanding</b> keeps its rank (3rd in both). Communication and leadership tops the postings (<b>46.8%</b>) but is fourth in developers' answers (7.2%).</p>
+        </div>
+        <p class="howto">Compare ranks, not bar lengths: the bases differ (N = 15,684 answers against 1,500 postings).</p>
+      </div>
+    </article>
+
+    <div class="callout callout--wide">
+      <h3>Reading the page</h3>
+      <p>Across these data, no single sector story fits all three sources. A lack of alignment is a finding about these data, not proof that cuts, hiring and worry are independent. Settling the causal question would need company-level links, dated survey waves and layoffs tagged with their reason.</p>
+    </div>
+
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <nav class="pager" aria-label="Other dashboards">
+      <a href="../sentiment/"><small>← Previous</small><b>Sentiment</b></a>
+      <a class="pager__next" href="../../#dashboards"><small>Back →</small><b>All dashboards</b></a>
+    </nav>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap footer__inner">
+    <p><a href="../../">← Back to the project</a></p>
+    <p class="muted">Sources: Layoffs.fyi tracker (via Kaggle), AI Jobs Market 2025–2026 Salaries (Kaggle), Stack Overflow Developer Survey 2025. Linked only through shared sector and role-family categories; the page shows parallel patterns, not causes.</p>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" hidden>
+  <button class="lightbox__close" aria-label="Close">×</button>
+  <img alt="">
+</div>
+
+<script src="../../assets/js/dashboard.js"></script>
+<script src="../../assets/js/reveal.js"></script>
+<script src="../../assets/js/main.js"></script>
+</body>
+</html>

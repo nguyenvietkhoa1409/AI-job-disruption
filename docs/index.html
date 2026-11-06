@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Job Market Disruption: an end-to-end data engineering &amp; analytics project</title>
+  <meta name="description" content="Three public datasets (layoffs, AI job postings, the Stack Overflow 2025 survey) integrated into a PostgreSQL star schema with Python ETL, Airflow, Docker, CI and Power BI.">
+  <meta property="og:title" content="AI Job Market Disruption: what is being cut, created and felt">
+  <meta property="og:description" content="End-to-end Data Engineering + Data Analytics project: Python ETL, data quality with quarantine, PostgreSQL star schema, NMF topic modeling, Airflow, Power BI.">
+  <meta property="og:image" content="https://nguyenvietkhoa1409.github.io/AI-job-disruption/assets/img/og-image.jpg">
+  <meta property="og:url" content="https://nguyenvietkhoa1409.github.io/AI-job-disruption/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/dashboard.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar__inner">
+    <a class="brand" href="#top">AI Job Disruption</a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#sources">Data</a>
+      <a href="#pipeline">Pipeline</a>
+      <a href="#warehouse">Warehouse</a>
+      <a href="#topics">Topic model</a>
+      <a href="#dashboards">Dashboards</a>
+      <a href="#findings">Findings</a>
+      <a href="#run">Run it</a>
+    </nav>
+    <a class="btn btn--small" href="https://github.com/nguyenvietkhoa1409/AI-job-disruption">GitHub</a>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <p class="eyebrow">End-to-end Data Engineering + Data Analytics</p>
+    <h1>AI and the tech labor market: what is being cut, created and felt</h1>
+    <p class="lede">Three public datasets, three angles on the same shift: a layoff tracker, AI job postings and the 2025 Stack Overflow Developer Survey. They are cleaned, conformed and loaded into one PostgreSQL warehouse, then analyzed in Power BI.</p>
+    <div class="hero__actions">
+      <a class="btn" href="#dashboards">See the dashboards</a>
+      <a class="btn btn--ghost" href="https://github.com/nguyenvietkhoa1409/AI-job-disruption">View the code</a>
+    </div>
+    <dl class="kpis">
+      <div class="kpi"><dt>Raw rows</dt><dd>55,223</dd><span>from 3 sources</span></div>
+      <div class="kpi"><dt>Quarantined</dt><dd>131</dd><span>0.24%, each with a reason</span></div>
+      <div class="kpi"><dt>Unaccounted rows</dt><dd>0</dd><span>raw = loaded + quarantined</span></div>
+      <div class="kpi"><dt>Warehouse</dt><dd>12</dd><span>8 dimension + 4 fact tables</span></div>
+    </dl>
+  </div>
+</section>
+
+<!-- SOURCES -->
+<section id="sources" class="section">
+  <div class="wrap">
+    <h2>Three questions, three sources</h2>
+    <p class="section__intro">The sources record different things at different grains, so no single file answers the question alone.</p>
+    <div class="cards cards--3">
+      <article class="card card--cut">
+        <p class="card__tag">What is being cut</p>
+        <h3>Layoffs.fyi tracker</h3>
+        <p>One row = a layoff event</p>
+        <ul class="facts">
+          <li><b>4,600</b> raw rows</li>
+          <li>2020-03-11 to 2026-09-08</li>
+          <li>No role or experience fields</li>
+        </ul>
+      </article>
+      <article class="card card--create">
+        <p class="card__tag">What is being created</p>
+        <h3>AI Jobs Market 2025–2026</h3>
+        <p>One row = a job posting</p>
+        <ul class="facts">
+          <li><b>1,500</b> raw rows</li>
+          <li>2025-01 to 2026-03</li>
+          <li>25 job titles, 14 countries</li>
+        </ul>
+      </article>
+      <article class="card card--feel">
+        <p class="card__tag">How practitioners feel</p>
+        <h3>Stack Overflow Survey 2025</h3>
+        <p>One row = a survey respondent</p>
+        <ul class="facts">
+          <li><b>49,123</b> raw rows</li>
+          <li>Single 2025 wave</li>
+          <li>27–32% missing per AI question</li>
+        </ul>
+      </article>
+    </div>
+    <div class="callout">
+      <b>Why integration is hard here:</b> 188 raw spellings for 175 countries, 46 industry labels, and zero overlap between the 25 job titles and 32 developer types. 34.8% of layoff events state no headcount. A naive "work years &gt; coding years" filter would have discarded 8.9% of valid survey rows.
+    </div>
+  </div>
+</section>
+
+<!-- PIPELINE -->
+<section id="pipeline" class="section section--alt">
+  <div class="wrap">
+    <h2>Architecture</h2>
+    <p class="section__intro">A batch ETL in Python, orchestrated by Airflow and loaded into PostgreSQL, all in Docker Compose. Rejected rows go to quarantine with the rule they failed, never silently dropped.</p>
+    <figure class="figure zoomable">
+      <img src="assets/img/architecture.webp" width="1920" height="899" loading="lazy"
+           alt="Architecture: data sources are ingested to raw storage, an Airflow DAG runs extract, quality rules, transform and NMF topic modeling, rejected rows go to data/quarantine, processed files are loaded in one transaction into a PostgreSQL star schema and mart, which Power BI reads.">
+      <figcaption>From public files to the BI layer. Topic modeling (NMF) runs on the survey only.</figcaption>
+    </figure>
+
+    <div class="cards cards--3 steps">
+      <article class="card">
+        <h3><span class="num">1</span>Extract, fail fast</h3>
+        <p>One pipeline template for all three datasets. Extraction stops if an expected column is missing; 154 unused survey columns are dropped at the source.</p>
+      </article>
+      <article class="card">
+        <h3><span class="num">2</span>Quality rules + quarantine</h3>
+        <p>24 rules, each tested on real data before adoption. Two plausible rules were rejected because they produced false positives (8.9% and 19.2% of rows).</p>
+      </article>
+      <article class="card">
+        <h3><span class="num">3</span>Conform and transform</h3>
+        <p>Country, industry, role, experience and skill are mapped once into shared dimensions. Unknown labels are quarantined, not lumped into a catch-all. Missing values are not imputed.</p>
+      </article>
+    </div>
+
+    <h3 class="subhead">Row reconciliation, raw file to warehouse</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Dataset</th><th class="r">Raw rows</th><th class="r">Quarantined</th><th class="r">Loaded</th><th class="r">Unaccounted</th></tr></thead>
+        <tbody>
+          <tr><td>Layoffs</td><td class="r">4,600</td><td class="r">18 (0.39%)</td><td class="r">4,582</td><td class="r">0</td></tr>
+          <tr><td>AI Jobs</td><td class="r">1,500</td><td class="r">0 (0%)</td><td class="r">1,500</td><td class="r">0</td></tr>
+          <tr><td>Survey</td><td class="r">49,123</td><td class="r">113 (0.23%)</td><td class="r">49,010</td><td class="r">0</td></tr>
+          <tr class="total"><td>Total</td><td class="r">55,223</td><td class="r">131 (0.24%)</td><td class="r">55,092</td><td class="r">0</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">The 18 layoff rows are older copies from 17 duplicate groups (same company, date and location). The 113 survey rows fail the age-to-experience check.</p>
+  </div>
+</section>
+
+<!-- WAREHOUSE -->
+<section id="warehouse" class="section">
+  <div class="wrap">
+    <h2>The warehouse</h2>
+    <p class="section__intro">A fact constellation in PostgreSQL 16: three fact tables at different grains share flat conformed dimensions. The DDL is defined once in SQL, and a test keeps the Python mirror of the schema in sync.</p>
+
+    <div class="schema">
+      <div class="schema__col">
+        <h3 class="schema__title">Fact tables</h3>
+        <ul class="tbls">
+          <li class="tbl tbl--fact"><code>fact_layoff_event</code><span>4,582</span></li>
+          <li class="tbl tbl--fact"><code>fact_job_posting</code><span>1,500</span></li>
+          <li class="tbl tbl--fact"><code>fact_survey_response</code><span>49,010</span></li>
+          <li class="tbl tbl--bridge"><code>fact_job_posting_skill</code><span>9,419</span></li>
+        </ul>
+        <h3 class="schema__title">Mart</h3>
+        <ul class="tbls">
+          <li class="tbl tbl--mart"><code>mart_country_month</code><span>789</span></li>
+        </ul>
+      </div>
+      <div class="schema__col">
+        <h3 class="schema__title">Dimensions</h3>
+        <ul class="tbls">
+          <li class="tbl"><code>dim_date</code><span>2020–2030</span></li>
+          <li class="tbl"><code>dim_country</code><span>175</span></li>
+          <li class="tbl"><code>dim_industry</code><span>12</span></li>
+          <li class="tbl"><code>dim_company</code><span>2,969</span></li>
+          <li class="tbl"><code>dim_role</code><span>57</span></li>
+          <li class="tbl"><code>dim_skill</code><span>91</span></li>
+          <li class="tbl"><code>dim_ai_sentiment</code><span>641</span></li>
+          <li class="tbl"><code>dim_ai_open_topic</code><span>10</span></li>
+        </ul>
+      </div>
+      <div class="schema__col schema__notes">
+        <h3 class="schema__title">Design choices</h3>
+        <ul class="ticks">
+          <li><b>Idempotent loads.</b> Natural keys with <code>ON CONFLICT DO NOTHING</code>; a second load of the same files inserts 0 rows, verified by tests.</li>
+          <li><b>One transaction.</b> Dimensions, facts, bridge and mart refresh load together or not at all.</li>
+          <li><b>Composite natural key</b> for layoffs (company + date + location); without location 5 events would collide.</li>
+          <li><b>Junk dimension:</b> 49,010 responses map to 641 combinations of the AI answers.</li>
+          <li><b>Bridge table</b> unnests posting skills into 9,419 pairs.</li>
+          <li><b>Materialized mart</b> of 789 rows reconciles exactly to the 4,582 events.</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note">Row counts are from the first load of the current raw files; <code>dim_date</code> is a continuous calendar keyed YYYYMMDD.</p>
+  </div>
+</section>
+
+<!-- TOPICS -->
+<section id="topics" class="section section--alt">
+  <div class="wrap">
+    <h2>Topic modeling of free-text answers</h2>
+    <p class="section__intro">The survey asked developers, in their own words, which skills they expect AI not to replace. 15,684 of those answers were grouped into ten recurring themes, so what people wrote can be counted and compared like any other survey answer.</p>
+    <figure class="figure zoomable">
+      <img src="assets/img/topic-workflow.webp" width="1920" height="670" loading="lazy"
+           alt="Topic workflow: 22,520 free-text answers; 28 rows quarantined and 1 spam answer blanked; 6,807 answers of four words or fewer get no topic; 15,684 are weighted with TF-IDF and fit with NMF into 10 topics; if each label matches exactly one topic the labels are stored, otherwise the pipeline stops.">
+      <figcaption>From raw text to topic labels. If any label fails to match exactly one topic, the pipeline halts.</figcaption>
+    </figure>
+
+    <div class="split">
+      <div>
+        <h3 class="subhead">Answers per topic</h3>
+        <table data-prism data-color="feel" data-of="of answers" data-count-label="answers">
+          <caption>Answers per topic, share of 15,684 modeled answers</caption>
+          <thead><tr><th>Topic</th><th>Share</th><th>Answers</th></tr></thead>
+          <tbody>
+            <tr><td>Business / domain understanding</td><td data-value="14.7">14.7%</td><td>2,301</td></tr>
+            <tr><td>Code reading &amp; writing</td><td data-value="14.3">14.3%</td><td>2,237</td></tr>
+            <tr><td>AI capability skepticism</td><td data-value="13.4">13.4%</td><td>2,098</td></tr>
+            <tr><td>Complex problem solving</td><td data-value="13.4">13.4%</td><td>2,097</td></tr>
+            <tr><td>Architecture / system design</td><td data-value="10.9">10.9%</td><td>1,705</td></tr>
+            <tr><td>Problem solving</td><td data-value="9.9">9.9%</td><td>1,557</td></tr>
+            <tr><td>Soft skills / communication</td><td data-value="7.2">7.2%</td><td>1,135</td></tr>
+            <tr><td>Critical thinking</td><td data-value="7.1">7.1%</td><td>1,112</td></tr>
+            <tr><td>High- vs low-level design</td><td data-value="4.7">4.7%</td><td>733</td></tr>
+            <tr><td>Skills will remain valuable</td><td data-value="4.6">4.6%</td><td>723</td></tr>
+          </tbody>
+        </table>
+        <p class="note">Share of 15,684 modeled answers, each counted once in its dominant topic. Hover a bar for the count.</p>
+      </div>
+      <div>
+        <div class="story">
+          <p class="story__kicker">What AI won't replace</p>
+          <h3>Understanding the business tops the list, just ahead of writing code</h3>
+          <p>Asked which skills AI will not replace, developers most often name <b>business and domain understanding</b> (14.7% of answers) and <b>reading and writing code</b> (14.3%), followed by solving complex problems (13.4%). Soft skills and critical thinking come up about half as often, at around 7% each.</p>
+        </div>
+        <div class="story">
+          <p class="story__kicker">Skepticism</p>
+          <h3>One answer in seven doubts AI itself</h3>
+          <p>13.4% of answers name no skill at all. Instead, they question what AI tools can actually do.</p>
+        </div>
+        <div class="story">
+          <p class="story__kicker">Experience</p>
+          <h3>Seniors point to the business, juniors to problem solving</h3>
+          <p>Among answers that name a skill, developers with 10+ years of experience pick business and domain understanding almost twice as often as entry-level developers (20% against 11%). Entry-level developers lean on problem solving instead (17% against 10%).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DASHBOARDS -->
+<section id="dashboards" class="section">
+  <div class="wrap">
+    <h2>Dashboards</h2>
+    <p class="section__intro">Five Power BI dashboards on seven pages. Open a dashboard to see each chart on its own, switch between its pages and try its toggles. Every chart title is a question and its caption the answer; every rate carries its N; segments under 30 records are greyed out; "no data" is drawn grey, never as zero.</p>
+
+    <div class="dash-cards">
+      <a class="dash-card" href="dashboards/overview/"><img src="assets/img/dash-overview.webp" width="1920" height="1080" loading="lazy" alt="Overview dashboard"><span class="dash-card__body"><span class="dash-card__tag">All three sources</span><span class="dash-card__title">Overview</span><span class="dash-card__desc">Three KPI groups, a sector grid across the three sources and the AI-threat rate by sector.</span><span class="dash-card__cta">Open dashboard →</span></span></a>
+      <div class="dash-card dash-card--multi"><a class="dash-card__media" href="dashboards/layoffs/" tabindex="-1" aria-hidden="true"><img src="assets/img/dash-when-where.webp" width="1920" height="1080" loading="lazy" alt=""></a><div class="dash-card__body"><span class="dash-card__tag dash-card__tag--cut">What is being cut</span><span class="dash-card__title"><a href="dashboards/layoffs/">Layoffs</a></span><span class="dash-card__desc">When and where tech layoffs happened, then who cut deepest and most.</span><div class="dash-card__pagenav"><span class="dash-card__pagenav-label">2 pages · open one</span><div class="page-btns"><a class="page-btn" href="dashboards/layoffs/#when-where">When &amp; where</a><a class="page-btn" href="dashboards/layoffs/#who-cut-most">Who cut most</a></div></div></div></div>
+      <div class="dash-card dash-card--multi"><a class="dash-card__media" href="dashboards/ai-jobs/" tabindex="-1" aria-hidden="true"><img src="assets/img/dash-roles-pay.webp" width="1920" height="1080" loading="lazy" alt=""></a><div class="dash-card__body"><span class="dash-card__tag dash-card__tag--create">What is being created</span><span class="dash-card__title"><a href="dashboards/ai-jobs/">Role &amp; Creation</a></span><span class="dash-card__desc">Which AI roles are growing and what they pay, then which skills define each role family.</span><div class="dash-card__pagenav"><span class="dash-card__pagenav-label">2 pages · open one</span><div class="page-btns"><a class="page-btn" href="dashboards/ai-jobs/#roles-pay">Roles &amp; pay</a><a class="page-btn" href="dashboards/ai-jobs/#skills">Skills</a></div></div></div></div>
+      <a class="dash-card" href="dashboards/sentiment/"><img src="assets/img/dash-sentiment.webp" width="1920" height="1080" loading="lazy" alt="Sentiment dashboard"><span class="dash-card__body"><span class="dash-card__tag dash-card__tag--feel">How practitioners feel</span><span class="dash-card__title">Sentiment</span><span class="dash-card__desc">Use, favorability, trust and threat; skills expected to last by career stage; attitude and pay by role.</span><span class="dash-card__cta">Open dashboard →</span></span></a>
+      <a class="dash-card" href="dashboards/cross-source/"><img src="assets/img/dash-cross-source.webp" width="1920" height="1080" loading="lazy" alt="Cross-source dashboard"><span class="dash-card__body"><span class="dash-card__tag">All three sources</span><span class="dash-card__title">Cross-source</span><span class="dash-card__desc">Skill themes, role families, sector cuts against postings and worry, read side by side.</span><span class="dash-card__cta">Open dashboard →</span></span></a>
+    </div>
+    <p class="note">Business logic lives in SQL views; medians and rates are DAX measures over event- or respondent-grain views, and shares carry 95% Wilson intervals computed in SQL.</p>
+  </div>
+</section>
+
+<!-- FINDINGS -->
+<section id="findings" class="section section--alt">
+  <div class="wrap">
+    <h2>What the data shows</h2>
+    <p class="section__intro">The analysis is descriptive. It puts patterns side by side; it does not claim that AI caused any of the layoffs.</p>
+
+    <div class="cards cards--3 findings">
+      <article class="card card--cut">
+        <p class="card__tag">What is being cut</p>
+        <h3>Fewer events, similar headcount</h3>
+        <p>In the 2025-01 to 2026-03 window there were <b>428</b> events (−48.9% against the prior 15 months) but <b>175,648</b> people (−1.1%). The ten largest events hold <b>54.1%</b> of the window's headcount.</p>
+        <p>Younger companies cut deeper: the median Seed-stage event removes <b>100%</b> of staff, falling to <b>10%</b> for Post-IPO companies. Full shutdowns rose from 8.6% of events in 2020 to <b>24.0%</b> in 2025.</p>
+      </article>
+      <article class="card card--create">
+        <p class="card__tag">What is being created</p>
+        <h3>Growth does not track pay</h3>
+        <p>ML Operations (<b>53%</b> a year) and AI Engineering (<b>40%</b>) grow fastest, against about 18% for a typical family. Architecture has the highest median salary of the 12 families yet grows only about 18%.</p>
+        <p>Seniority is the largest pay lever: <b>$145k</b> at Entry to <b>$238k</b> at Lead (+64%). Python appears in <b>942</b> of 1,500 postings and in 77% of AI Engineering postings.</p>
+      </article>
+      <article class="card card--feel">
+        <p class="card__tag">How practitioners feel</p>
+        <h3>Use without trust</h3>
+        <p><b>78.5%</b> use AI tools at least monthly and 61% are favorable, but 46% distrust their accuracy (net −13). Only <b>14.9%</b> see AI as a threat to their job (N = 35,964).</p>
+        <p>Worry is highest among UX, research and UI designers (<b>29%</b>) and data or business analysts (24%). Media &amp; Marketing (18.3%) is the only sector clearly above the average.</p>
+      </article>
+    </div>
+
+    <div class="callout callout--wide">
+      <h3>Read together</h3>
+      <p>Across the nine sectors present in both sources, the three mostly do not line up. Cuts and AI hiring diverge: Technology &amp; Software holds <b>33.6%</b> of the cuts but 7.8% of the postings. Cuts and worry diverge: the largest cutters sit at the average threat rate, and the rank correlation between layoffs and threat is about 0.28, which is not significant. Growth and worry diverge: AI Engineering, the fastest-growing matched family, reports 19.8% threat against 14.9% overall. Skills only partly agree: of four matched skills, only business and domain understanding keeps its rank.</p>
+      <p>The sources share only sector and role-family categories, with no company-level link, so this is a finding about these data, not proof that cuts, hiring and worry are independent, and not evidence that AI caused these layoffs.</p>
+    </div>
+  </div>
+</section>
+
+<!-- STACK -->
+<section id="stack" class="section">
+  <div class="wrap">
+    <h2>Stack and engineering practice</h2>
+    <div class="cards cards--4">
+      <article class="card card--mini"><h3>Python · pandas</h3><p>55k rows fit in single-node memory, so a distributed engine would add cost without benefit.</p></article>
+      <article class="card card--mini"><h3>PostgreSQL 16</h3><p>Enforced keys and constraints, materialized views; a cloud warehouse is not warranted at this scale.</p></article>
+      <article class="card card--mini"><h3>Airflow · Docker Compose</h3><p>Task dependencies, retries and per-task logs; the whole environment comes up with one command.</p></article>
+      <article class="card card--mini"><h3>Power BI · Deneb</h3><p>Relational model and DAX measures; Vega-Lite visuals for dot plots, dumbbells and maps.</p></article>
+    </div>
+    <ul class="ticks ticks--cols">
+      <li>GitHub Actions CI: 93 <code>pytest</code> tests in 16 files against a <code>postgres:16</code> service, plus a DAG-integrity job</li>
+      <li>Loader integration tests check idempotency and the raw-to-warehouse reconciliation</li>
+      <li>Protected <code>main</code>, feature branches, pull requests with review</li>
+      <li>Text <code>NaN</code> stored as SQL <code>NULL</code>, fixing 17,237 cells an early loader stored as literal text</li>
+    </ul>
+  </div>
+</section>
+
+<!-- RUN -->
+<section id="run" class="section section--alt">
+  <div class="wrap">
+    <h2>Run it yourself</h2>
+    <p class="section__intro">Raw files are not committed. Place them under <code>data/raw/</code> (see the README), then:</p>
+<pre class="code"><code>git clone https://github.com/nguyenvietkhoa1409/AI-job-disruption.git
+cd AI-job-disruption
+cp .env.example .env
+docker compose up -d postgres          # star schema is created on first start
+
+python -m venv .venv &amp;&amp; .venv\Scripts\activate
+pip install -r requirements.txt        # Python 3.12
+python run_pipeline.py                 # extract, clean, transform -&gt; data/processed/
+python -m src.warehouse.loader         # load dims -&gt; facts -&gt; bridge, refresh mart
+
+docker compose up -d                   # optional: Airflow at http://localhost:8080</code></pre>
+    <p><a class="btn" href="https://github.com/nguyenvietkhoa1409/AI-job-disruption#readme">Full setup in the README</a></p>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap footer__inner">
+    <p><b>AI Job Market Disruption</b> · built by
+      <a href="https://github.com/nguyenvietkhoa1409">nguyenvietkhoa1409</a> and
+      <a href="https://github.com/maianhtieu87">maianhtieu87</a></p>
+    <p class="muted">Data: Layoffs.fyi (via Kaggle), AI Jobs Market 2025–2026 Salaries (Kaggle), Stack Overflow Developer Survey 2025. Figures describe these datasets and their coverage, not the whole labor market.</p>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" hidden>
+  <button class="lightbox__close" aria-label="Close">×</button>
+  <img alt="">
+</div>
+
+<script src="assets/js/prism-bars.js"></script>
+<script src="assets/js/reveal.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

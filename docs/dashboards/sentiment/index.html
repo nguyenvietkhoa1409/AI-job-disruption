@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sentiment dashboard · AI Job Market Disruption</title>
+  <meta name="description" content="Power BI Sentiment dashboard: how developers feel about AI tools, which roles feel or earn differently, and which skills developers expect to last, from the 2025 Stack Overflow Developer Survey.">
+  <meta property="og:title" content="Sentiment dashboard: worry, trust and what developers say will last">
+  <meta property="og:image" content="https://nguyenvietkhoa1409.github.io/AI-job-disruption/dashboards/sentiment/img/full.webp">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <link rel="stylesheet" href="../../assets/css/dashboard.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar__inner">
+    <a class="brand" href="../../">AI Job Disruption</a>
+    <nav class="nav" aria-label="Sections">
+      <a href="../../#pipeline">Pipeline</a>
+      <a href="../../#warehouse">Warehouse</a>
+      <a href="../../#dashboards">Dashboards</a>
+      <a href="../../#findings">Findings</a>
+    </nav>
+    <a class="btn btn--small" href="https://github.com/nguyenvietkhoa1409/AI-job-disruption">GitHub</a>
+  </div>
+</header>
+
+<main>
+
+<section class="hero dash-hero">
+  <div class="wrap">
+    <p class="crumbs"><a href="../../">Home</a><span>/</span><a href="../../#dashboards">Dashboards</a><span>/</span>Sentiment</p>
+    <p class="eyebrow">Dashboard 4 of 5 · How practitioners feel</p>
+    <h1>Worry, trust and what developers say will last</h1>
+    <p class="lede">Developers use AI tools and rate them favorably, but trust what they say far less. How the answers split, which roles feel or earn differently, and which skills developers expect to stay valuable. 2025 Stack Overflow Developer Survey, one wave.</p>
+    <div class="chips"><span>Filters:</span>
+      <span class="chip">Role type</span><span class="chip">Experience</span><span class="chip">Age</span><span class="chip">Education</span><span class="chip">Developer status</span><span class="chip">Country</span><span class="chip">Industry sector</span>
+    </div>
+    <dl class="kpis kpis--dash">
+      <div class="kpi"><dt>Say AI threatens their job</dt><dd>14.9%</dd><span>N = 35,964 answered</span></div>
+      <div class="kpi"><dt>Favorability toward AI (1–5)</dt><dd>3.54</dd><span>N = 32,632 · "Unsure" left out</span></div>
+      <div class="kpi"><dt>Trust in AI accuracy (1–5)</dt><dd>2.71</dd><span>N = 33,219 answered</span></div>
+      <div class="kpi"><dt>Use AI tools</dt><dd>78.5%</dd><span>Daily to monthly · N = 33,638</span></div>
+    </dl>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="panel-head">
+      <h2>The dashboard</h2>
+      <p>The page as it appears in Power BI, with no filters applied. Click to enlarge. Each chart is broken out below.</p>
+    </div>
+    <figure class="figure full-fig zoomable">
+      <img src="img/full.webp" width="1920" height="1077"
+           alt="Full Sentiment dashboard with filters, five KPI tiles, diverging bars of favorability, trust and threat, the skills developers expect to last by experience, and sentiment and pay by developer role.">
+    </figure>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="wrap">
+
+    <article class="chart" id="feel-about-ai">
+      <figure class="static-fig zoomable">
+        <img src="img/feel-about-ai.webp" width="1600" height="459" loading="lazy"
+             alt="Diverging bars for three survey questions: favorability 21% negative, 61% positive, 18% indifferent, net +40; trust in accuracy 46% distrust, 33% trust, 22% neither, net −13; AI a threat to your job 15% yes, 64% no, 21% not sure, net +49.">
+      </figure>
+      <div class="chart__text">
+        <p class="chart__q">Chart 1 · Three questions</p>
+        <h2>How do developers feel about AI tools?</h2>
+        <p>Each question split into negative (left) and positive (right) answers, with the neutral answer on its own and the net score, positive minus negative.</p>
+        <div class="insight">
+          <p>Developers use AI more than they trust it. <b>61%</b> are favorable toward AI tools (net +40), yet <b>46%</b> distrust the accuracy of what it says against 33% who trust it (net <b>−13</b>). Only <b>15%</b> see AI as a threat to their job; 64% do not.</p>
+          <p>With 78.5% using AI tools at least monthly, we read the gap between use and trust as developers treating AI output as a draft to check rather than rejecting the tools.</p>
+        </div>
+        <p class="howto">Non-responses (27–32% on the AI questions) are left out of every rate; each rate carries its N.</p>
+      </div>
+    </article>
+
+    <article class="chart" id="roles">
+      <div class="viewer zoomable" data-viewer>
+        <script type="application/json">{
+          "base": "img/",
+          "controls": [
+            {"type": "switch", "id": "metric", "label": "Show", "default": "favor",
+             "options": [{"value": "favor", "label": "Favorability"}, {"value": "trust", "label": "Trust"}, {"value": "threat", "label": "AI threat"}]}
+          ],
+          "states": {
+            "metric=favor": {
+              "img": "sentiment__switch-favor.webp",
+              "alt": "Average favorability toward AI by developer role, clear differences only: AI apps / physical AI developers 4.3, AI/ML engineers and product managers 4.1 at the top; game / graphics developers 2.9, embedded developers and system administrators 3.1 at the bottom; with each role's pay against peers.",
+              "note": "<p><b>Favorability:</b> people who build AI or manage products are the most favorable: AI apps / physical AI developers (<b>4.3</b>), AI/ML engineers and product managers (4.1). Game and graphics developers are the least (<b>2.9</b>), then embedded developers and system administrators (3.1). Sixteen other roles are not clearly different from everyone.</p>"
+            },
+            "metric=trust": {
+              "img": "sentiment__switch-trust.webp",
+              "alt": "Average trust in AI accuracy by developer role, clear differences only: AI apps / physical AI developers 3.3, AI/ML engineers and product managers 3.2 at the top; game / graphics developers 2.2, embedded developers and applied scientists 2.3 at the bottom; with each role's pay against peers.",
+              "note": "<p><b>Trust:</b> the same roles trust AI most, but even they sit near the middle of the scale (AI apps / physical AI developers <b>3.3</b>). Trust is lowest among game and graphics developers (<b>2.2</b>), embedded developers and applied scientists (2.3) and academic researchers (2.4). Fifteen other roles are not clearly different.</p>"
+            },
+            "metric=threat": {
+              "img": "sentiment__switch-aithreat.webp",
+              "alt": "Share who see AI as a threat to their job, all developer roles: UX / research ops / UI design 29% and data or business analysts 24% clearly above everyone; embedded developers 8% and senior executives 9% lowest; with each role's pay against peers.",
+              "note": "<p><b>AI threat:</b> worry is clearly higher in only two roles: UX, research ops and UI designers (<b>29%</b>) and data or business analysts (<b>24%</b>). Analysts are also paid <b>24% less</b> than peers in the same country with the same experience. Senior executives, founders and embedded developers worry least (8–9%).</p>"
+            }
+          }
+        }</script>
+        <figure class="viewer__frame">
+          <img src="img/sentiment__switch-favor.webp" width="1025" height="1085"
+               alt="Average favorability toward AI by developer role, clear differences only: AI apps / physical AI developers 4.3, AI/ML engineers and product managers 4.1 at the top; game / graphics developers 2.9, embedded developers and system administrators 3.1 at the bottom; with each role's pay against peers.">
+        </figure>
+      </div>
+      <div class="chart__text">
+        <p class="chart__q">Chart 2 · By role</p>
+        <h2>Which roles feel differently about AI, and how are they paid?</h2>
+        <p>Left: the chosen measure per developer role against everyone (dashed line); blue = clearly more favorable, orange = clearly less, grey = not clear. Right: the role's median pay against peers in the same country with the same experience; a dark bar is clearly different from peers.</p>
+        <div class="insight viewer__note-target"></div>
+        <p>Attitude and pay only partly line up. AI/ML engineers are more favorable and paid more than peers (+28%); academic researchers and system administrators are less favorable and paid less (−31% and −30%). But game and graphics developers, the least favorable role, are paid in line with peers.</p>
+        <p class="howto">Try the switch above the chart; it behaves like the toggle in the Power BI report. Favorability and trust list only the roles that are clearly different; AI threat lists every role.</p>
+      </div>
+    </article>
+
+    <article class="chart" id="skills-last">
+      <figure class="static-fig zoomable">
+        <img src="img/skills-last.webp" width="1600" height="537" loading="lazy"
+             alt="Skills developers say will remain valuable, from the topic model: business / domain understanding 17.8%, code reading and writing 17.5%, complex problem-solving 16.4%; dumbbells by experience show business understanding at 11% for entry level against 20% for 10+ years, and problem solving at 17% against 10%.">
+      </figure>
+      <div class="chart__text">
+        <p class="chart__q">Chart 3 · Skills that last</p>
+        <h2>Which skills do developers say will last, and does it depend on experience?</h2>
+        <p>Left: share of answers that name each skill theme, from the topic model of the free-text answers. Right: the same share for entry-level developers (up to 2 years) against those with 10+ years.</p>
+        <div class="insight">
+          <p>Among skills expected to last, <b>business and domain understanding</b> (17.8%), code reading and writing (17.5%) and complex problem-solving (16.4%) lead. Experience changes the answer: developers with 10+ years name business understanding almost twice as often as entry-level ones (<b>20%</b> against 11%), while entry-level developers emphasise problem solving (<b>17%</b> against 10%).</p>
+        </div>
+        <p class="howto">These are expectations, not outcomes. The topic model covers 69.7% of valid answers (answers of four words or fewer get no topic), and respondents are self-selected.</p>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <nav class="pager" aria-label="Other dashboards">
+      <a href="../ai-jobs/"><small>← Previous</small><b>AI jobs · Role &amp; Creation</b></a>
+      <a class="pager__next" href="../cross-source/"><small>Next →</small><b>Cross-source</b></a>
+    </nav>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap footer__inner">
+    <p><a href="../../">← Back to the project</a></p>
+    <p class="muted">Source: Stack Overflow Developer Survey 2025 (49,010 responses after quality rules). The survey has no respondent-level date, so it is read as one snapshot.</p>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" hidden>
+  <button class="lightbox__close" aria-label="Close">×</button>
+  <img alt="">
+</div>
+
+<script src="../../assets/js/dashboard.js"></script>
+<script src="../../assets/js/reveal.js"></script>
+<script src="../../assets/js/main.js"></script>
+</body>
+</html>

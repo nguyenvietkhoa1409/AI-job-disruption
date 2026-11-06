@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Role &amp; Creation dashboard · AI Job Market Disruption</title>
+  <meta name="description" content="Power BI Role &amp; Creation dashboard, two pages: which AI role families grow fastest and what they pay, and which skills each role family asks for, from 1,500 AI job postings (2025-01 to 2026-03).">
+  <meta property="og:title" content="Role &amp; Creation dashboard: the AI roles on offer and what they pay">
+  <meta property="og:image" content="https://nguyenvietkhoa1409.github.io/AI-job-disruption/dashboards/ai-jobs/img/roles-pay/full.webp">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <link rel="stylesheet" href="../../assets/css/dashboard.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar__inner">
+    <a class="brand" href="../../">AI Job Disruption</a>
+    <nav class="nav" aria-label="Sections">
+      <a href="../../#pipeline">Pipeline</a>
+      <a href="../../#warehouse">Warehouse</a>
+      <a href="../../#dashboards">Dashboards</a>
+      <a href="../../#findings">Findings</a>
+    </nav>
+    <a class="btn btn--small" href="https://github.com/nguyenvietkhoa1409/AI-job-disruption">GitHub</a>
+  </div>
+</header>
+
+<main>
+
+<section class="hero dash-hero">
+  <div class="wrap">
+    <p class="crumbs"><a href="../../">Home</a><span>/</span><a href="../../#dashboards">Dashboards</a><span>/</span>Role &amp; Creation</p>
+    <p class="eyebrow">Dashboard 3 of 5 · What is being created</p>
+    <h1>The AI roles on offer and what they pay</h1>
+    <p class="lede" data-page-lede>Which AI role families grow fastest and whether they pay more, how pay varies inside AI Engineering, and what a degree and experience add. 1,500 postings, 2025-01 to 2026-03.</p>
+    <div class="chips"><span>Filters on both pages:</span>
+      <span class="chip">Job category</span><span class="chip">Experience level</span><span class="chip">Country</span><span class="chip">Sector</span><span class="chip">Company size</span><span class="chip">Education</span><span class="chip">LLM role</span>
+    </div>
+    <dl class="kpis kpis--dash">
+      <div class="kpi"><dt>AI job postings</dt><dd>1,500</dd><span>14 countries · 25 job titles · 21.8% LLM roles</span></div>
+      <div class="kpi"><dt>Median posted salary</dt><dd>$180,000</dd><span>Entry $145k → Lead $238k (+64.1%)</span></div>
+      <div class="kpi"><dt>Fastest-growing family</dt><dd>52.8%</dd><span>ML Operations, demand growth a year · typical ≈ 18% · N = 51</span></div>
+      <div class="kpi"><dt>Postings in the United States</dt><dd>34.3%</dd><span>Top 3 countries = 46% · N = 1,500</span></div>
+    </dl>
+  </div>
+</section>
+
+<nav class="page-tabs" aria-label="Pages of this dashboard">
+  <div class="wrap page-tabs__inner">
+    <span class="page-tabs__label">Page</span>
+    <div class="page-seg" role="tablist">
+      <button type="button" class="page-tab" role="tab" data-page="roles-pay" aria-controls="panel-roles-pay" id="tab-roles-pay">Roles &amp; pay</button>
+      <button type="button" class="page-tab" role="tab" data-page="skills" aria-controls="panel-skills" id="tab-skills">Skills</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ===================== PAGE 1: ROLES & PAY ===================== -->
+<div class="page-panel" id="panel-roles-pay" data-page="roles-pay" role="tabpanel" aria-labelledby="tab-roles-pay" data-title="Roles &amp; pay"
+     data-lede="Which AI role families grow fastest and whether they pay more, how pay varies inside AI Engineering, and what a degree and experience add. 1,500 postings, 2025-01 to 2026-03.">
+
+<section class="section">
+  <div class="wrap">
+    <div class="panel-head">
+      <h2>Page 1 · Roles &amp; pay</h2>
+      <p>The page as it appears in Power BI, with no filters applied. Click to enlarge. Each chart is broken out below.</p>
+    </div>
+    <figure class="figure full-fig zoomable">
+      <img src="img/roles-pay/full.webp" width="1920" height="1078"
+           alt="Full Role &amp; Creation dashboard page 'Roles &amp; pay' with filters, four KPI tiles, a bubble chart of role families by salary, the salary range of AI Engineering titles, salary by degree and salary by experience level.">
+    </figure>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="wrap">
+
+    <article class="chart" id="role-families">
+      <div class="viewer zoomable" data-viewer>
+        <script type="application/json">{
+          "base": "img/roles-pay/",
+          "controls": [
+            {"type": "switch", "id": "metric", "label": "Show", "default": "growth",
+             "options": [{"value": "growth", "label": "Demand growth"}, {"value": "paybump", "label": "Pay bump for AI skills"}, {"value": "score", "label": "Demand score"}]}
+          ],
+          "states": {
+            "metric=growth": {
+              "img": "whichkinds__switch-demandgrowth.webp",
+              "alt": "Role families by median posted salary and yearly demand growth: ML Operations 53%, AI Engineering 40%, Data Science about 32%, all others between 17% and 20%; Architecture has the highest salary.",
+              "note": "<p><b>Demand growth:</b> ML Operations (<b>53%</b> a year, N = 51) and AI Engineering (<b>40%</b>) grow fastest, against about 18% for a typical family. Architecture has the highest median salary of the 12 families yet grows only about 18%: faster growth does not mean higher pay.</p>"
+            },
+            "metric=paybump": {
+              "img": "whichkinds__switch-paybump.webp",
+              "alt": "Role families by median posted salary and the pay premium attributed to AI skills: most families between 12% and 13.5%, AI Engineering 9.8%, Data Science 6.6%.",
+              "note": "<p><b>Pay bump for AI skills:</b> the premium postings attribute to AI skills is a narrow <b>12–13.5%</b> in most families and does not follow salary. It is lowest for Data Science (<b>6.6%</b>) and AI Engineering (<b>9.8%</b>).</p>"
+            },
+            "metric=score": {
+              "img": "whichkinds__switch-demandscore.webp",
+              "alt": "Role families by median posted salary and demand score from 0 to 100: ML Operations 93, AI Engineering and Data Science close behind, Architecture 84, Governance lowest at about 70.",
+              "note": "<p><b>Demand score:</b> demand is highest for ML Operations (<b>93</b>), followed closely by AI Engineering and Data Science. Architecture pays the most but sits mid-table on demand (<b>84</b>); Governance scores lowest, at about 70.</p>"
+            }
+          }
+        }</script>
+        <figure class="viewer__frame">
+          <img src="img/roles-pay/whichkinds__switch-demandgrowth.webp" width="1312" height="1070"
+               alt="Role families by median posted salary and yearly demand growth: ML Operations 53%, AI Engineering 40%, Data Science about 32%, all others between 17% and 20%; Architecture has the highest salary.">
+        </figure>
+      </div>
+      <div class="chart__text">
+        <p class="chart__q">Chart 1 · Role families</p>
+        <h2>Which kinds of AI role are growing fastest, and do they pay more?</h2>
+        <p>Each bubble is one of the 12 role families: median posted salary across, the metric chosen with the switch up. Size = postings (N); purple = AI Engineering, the largest family (N = 736).</p>
+        <div class="insight viewer__note-target"></div>
+        <p>Outside AI Engineering each family has only 50–127 postings. Demand growth, demand score and pay bump are fields supplied with the dataset, not trends we measured, so we read them directionally.</p>
+        <p class="howto">Try the switch above the chart; it behaves like the toggle in the Power BI report.</p>
+      </div>
+    </article>
+
+    <article class="chart" id="salary-by-title">
+      <figure class="static-fig zoomable">
+        <img src="img/roles-pay/salary-by-title.webp" width="1484" height="644" loading="lazy"
+             alt="Salary ranges of the 12 AI Engineering job titles, with the median as a dot: LLM Engineer $232k, Senior ML Engineer $227k, RAG Engineer $215k, down to Prompt Engineer $144k and AI Engineer $141k.">
+      </figure>
+      <div class="chart__text">
+        <p class="chart__q">Chart 2 · Inside AI Engineering</p>
+        <h2>Which AI Engineering jobs pay most?</h2>
+        <p>The 12 job titles of the AI Engineering family. The dot and label are the median posted salary, the bar the spread of salaries; N = postings. Amber = the highest-paid title.</p>
+        <div class="insight">
+          <p>The title matters more than the family. Medians run from <b>$141k</b> (AI Engineer) to <b>$232k</b> (LLM Engineer), and LLM titles alone span $144k (Prompt Engineer) to $232k, so the "AI" or "LLM" label says little about pay.</p>
+        </div>
+        <p class="howto">Each title has 46–75 postings, so neighbouring medians a few thousand dollars apart are not a reliable ranking.</p>
+      </div>
+    </article>
+
+    <article class="chart" id="education">
+      <figure class="static-fig zoomable">
+        <img src="img/roles-pay/education.webp" width="794" height="485" loading="lazy"
+             alt="Median posted salary by required degree, with ranges: Bootcamp 176K, Associate 160K, Bachelor 177K, Master 196.5K, PhD 204.5K.">
+      </figure>
+      <div class="chart__text">
+        <p class="chart__q">Chart 3 · Degree</p>
+        <h2>Does a higher degree pay more?</h2>
+        <p>Median posted salary by the degree a posting asks for, with the salary range as whiskers. Amber = the highest median.</p>
+        <div class="insight">
+          <p>Somewhat, but less than experience. A PhD posting has a median of <b>$204.5k</b>, roughly 16% above a Bachelor's ($177k), and a Bootcamp posting ($176k) is level with a Bachelor's. The ranges overlap heavily.</p>
+        </div>
+        <p class="howto">The degree is what the posting asks for, not what the person hired holds.</p>
+      </div>
+    </article>
+
+    <article class="chart" id="experience">
+      <figure class="static-fig zoomable">
+        <img src="img/roles-pay/experience.webp" width="690" height="485" loading="lazy"
+             alt="Median posted salary by experience level: Entry $145K, Mid $162K (+11.7%), Senior $208K (+43.4%), Lead $238K (+64.1%).">
+      </figure>
+      <div class="chart__text">
+        <p class="chart__q">Chart 4 · Experience</p>
+        <h2>How much does experience add?</h2>
+        <p>Median posted salary by experience level, with the range as whiskers. The amber pills are the gap to Entry.</p>
+        <div class="insight">
+          <p>Seniority is the largest pay lever on this page. The median rises from <b>$145k</b> at Entry to <b>$238k</b> at Lead (<b>+64%</b>); the Mid and Senior steps are +11.7% and +43.4%. Most of the gain comes between Mid and Senior.</p>
+        </div>
+        <p class="howto">Levels: Entry 0–2 years, Mid 3–5, Senior 6–9, Lead 10 or more.</p>
+      </div>
+    </article>
+
+    <div class="page-next page-next--fwd">
+      <button type="button" data-goto="skills">Next page · Skills →</button>
+    </div>
+
+  </div>
+</section>
+</div>
+
+<!-- ===================== PAGE 2: SKILLS ===================== -->
+<div class="page-panel" id="panel-skills" data-page="skills" role="tabpanel" aria-labelledby="tab-skills" data-title="Skills"
+     data-lede="Which skills each AI role family asks for, which skills are requested most across all postings, and what AI Engineering postings ask for.">
+
+<section class="section">
+  <div class="wrap">
+    <div class="panel-head">
+      <h2>Page 2 · Skills</h2>
+      <p>The page as it appears in Power BI, with no filters applied. Click to enlarge. Each chart is broken out below.</p>
+    </div>
+    <figure class="figure full-fig zoomable">
+      <img src="img/skills/full.webp" width="1920" height="1080" loading="lazy"
+           alt="Full Role &amp; Creation dashboard page 'Skills' with filters, four KPI tiles, a heatmap of skills by role family, a table of the most requested skills and the skills AI Engineering postings ask for.">
+    </figure>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="wrap">
+
+    <article class="chart" id="skill-heatmap">
+      <figure class="static-fig zoomable">
+        <img src="img/skills/skill-heatmap.webp" width="1600" height="1025" loading="lazy"
+             alt="Heatmap of the share of postings requiring each of 12 skills, by role family: Python 66–82% where it appears, Cloud 76–81% in Infrastructure, Architecture and ML Operations, Agile 90% in Product, PyTorch 78% in Research.">
+      </figure>
+      <div class="chart__text">
+        <p class="chart__q">Chart 1 · Skills by role family</p>
+        <h2>Which skills define which kinds of role?</h2>
+        <p>Share of a family's postings that require each skill. Darker = a larger share; grey = no posting in that family requires the skill.</p>
+        <div class="insight">
+          <p>A common core, then family-specific skills. Python is required by <b>66–82%</b> of postings wherever it appears, yet Governance, Product and Infrastructure list it nowhere. Cloud is tied to Infrastructure, Architecture and ML Operations (<b>76–81%</b>), SQL to Business (82%) and Data Engineering (76%), and PyTorch to Research (<b>78%</b>). Product stands out on Agile (90%).</p>
+        </div>
+        <p class="howto">Family sizes differ a lot: AI Engineering has 736 postings, the smallest families about 50.</p>
+      </div>
+    </article>
+
+    <article class="chart" id="top-skills">
+      <figure class="static-fig zoomable">
+        <img src="img/skills/top-skills.webp" width="1105" height="610" loading="lazy"
+             alt="Table of the most requested skills: Python 942 postings, Cloud 444, SQL 422, Communication 365, Leadership 363, Research 363, with demand scores between 85 and 90 and median salaries between $173K and $180K.">
+      </figure>
+      <div class="chart__text">
+        <p class="chart__q">Chart 2 · Most requested</p>
+        <h2>Which skills are asked for most?</h2>
+        <p>Skills with at least 30 postings, ranked by postings, with the average demand score and the median salary of the postings that ask for them.</p>
+        <div class="insight">
+          <p>Python leads by a wide margin: <b>942</b> of the 1,500 postings, more than twice Cloud (444) and SQL (422). Two soft skills follow, Communication (365) and Leadership (363). Salaries barely differ between the top skills ($173k–$180k).</p>
+        </div>
+        <p class="howto">The salary describes the roles that ask for the skill, not the value of the skill itself. The image shows the top six rows; in Power BI the table scrolls and sorts by any column.</p>
+      </div>
+    </article>
+
+    <article class="chart" id="ai-eng-skills">
+      <figure class="static-fig zoomable">
+        <img src="img/skills/ai-eng-skills.webp" width="1105" height="513" loading="lazy"
+             alt="Share of AI Engineering postings requiring each skill: Python 77%, PyTorch 36%, Fine-tuning 28%, Cloud 26%, SQL 24%, Research 23%, Linux 22%, Problem Solving 22%.">
+      </figure>
+      <div class="chart__text">
+        <p class="chart__q">Chart 3 · AI Engineering</p>
+        <h2>What do AI Engineering postings ask for?</h2>
+        <p>Share of the 736 AI Engineering postings that require each skill, top eight.</p>
+        <div class="insight">
+          <p>Python is the only skill most AI Engineering postings require (<b>77%</b>). Everything after it is asked for by about a third or less: PyTorch 36%, Fine-tuning 28%, Cloud 26%.</p>
+        </div>
+        <p class="howto">Fine-tuning ranks third here but is not among the 12 skills of the heatmap, which lists the skills most requested across all families.</p>
+      </div>
+    </article>
+
+    <div class="page-next page-next--back">
+      <button type="button" data-goto="roles-pay">← Previous page · Roles &amp; pay</button>
+    </div>
+
+  </div>
+</section>
+</div>
+
+<section class="section">
+  <div class="wrap">
+    <nav class="pager" aria-label="Other dashboards">
+      <a href="../layoffs/"><small>← Previous</small><b>Layoffs</b></a>
+      <a class="pager__next" href="../sentiment/"><small>Next →</small><b>Sentiment</b></a>
+    </nav>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap footer__inner">
+    <p><a href="../../">← Back to the project</a></p>
+    <p class="muted">Source: AI Jobs Market 2025–2026 Salaries (Kaggle), 1,500 postings, 2025-01 to 2026-03. Every title in this dataset is an emerging AI role, so its salaries are not comparable with the survey's.</p>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" hidden>
+  <button class="lightbox__close" aria-label="Close">×</button>
+  <img alt="">
+</div>
+
+<script src="../../assets/js/dashboard.js"></script>
+<script src="../../assets/js/reveal.js"></script>
+<script src="../../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Overview dashboard · AI Job Market Disruption</title>
+  <meta name="description" content="Power BI Overview dashboard: what is being cut, created and felt in the tech labor market, by sector, over the 2025-01 to 2026-03 window.">
+  <meta property="og:title" content="Overview dashboard: what is being cut, created and felt">
+  <meta property="og:image" content="https://nguyenvietkhoa1409.github.io/AI-job-disruption/dashboards/overview/img/full.webp">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <link rel="stylesheet" href="../../assets/css/dashboard.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar__inner">
+    <a class="brand" href="../../">AI Job Disruption</a>
+    <nav class="nav" aria-label="Sections">
+      <a href="../../#pipeline">Pipeline</a>
+      <a href="../../#warehouse">Warehouse</a>
+      <a href="../../#dashboards">Dashboards</a>
+      <a href="../../#findings">Findings</a>
+    </nav>
+    <a class="btn btn--small" href="https://github.com/nguyenvietkhoa1409/AI-job-disruption">GitHub</a>
+  </div>
+</header>
+
+<main>
+
+<section class="hero dash-hero">
+  <div class="wrap">
+    <p class="crumbs"><a href="../../">Home</a><span>/</span><a href="../../#dashboards">Dashboards</a><span>/</span>Overview</p>
+    <p class="eyebrow">Dashboard 1 of 5 · All three sources</p>
+    <h1>What is being cut, created and felt, and where the three meet</h1>
+    <p class="lede">The three sources side by side, by sector. Layoffs and postings cover the 15 months from 2025-01 to 2026-03, the period the postings cover, compared with the 15 months before. The survey has no respondent-level date, so it is read as one 2025 snapshot.</p>
+    <div class="chips"><span>Window:</span>
+      <span class="chip">2025-01 to 2026-03</span>
+    </div>
+    <dl class="kpis kpis--dash">
+      <div class="kpi"><dt>People laid off (disclosed)</dt><dd>175,648</dd><span>−1.1% vs the prior 15 months · N = 292 events with a headcount</span></div>
+      <div class="kpi"><dt>Layoff events</dt><dd>428</dd><span>−48.9% vs the prior 15 months · 68% disclose a headcount</span></div>
+      <div class="kpi"><dt>AI job postings</dt><dd>1,500</dd><span>14 countries · 25 job titles · 21.8% LLM roles</span></div>
+      <div class="kpi"><dt>Say AI threatens their job</dt><dd>14.9%</dd><span>N = 35,964 answered, 73% of 49,010 responses</span></div>
+    </dl>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="panel-head">
+      <h2>The dashboard</h2>
+      <p>The page as it appears in Power BI, with no filters applied. Click to enlarge. Each chart is broken out below.</p>
+    </div>
+    <figure class="figure full-fig zoomable">
+      <img src="img/full.webp" width="1920" height="1081"
+           alt="Full Overview dashboard with three KPI groups (what is being cut, created and felt), a sector grid of layoffs, postings and AI-threat rate, and a dot plot of the AI-threat rate by sector.">
+    </figure>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="wrap">
+
+    <article class="chart" id="kpis">
+      <figure class="static-fig zoomable">
+        <img src="img/kpis.webp" width="1600" height="267"
+             alt="KPI row: 175,648 people laid off (−1.1% vs prior 15 months) in 428 events (−48.9%), with monthly bars for the prior 15 months in grey and the window in amber; 1,500 AI job postings, 21.8% LLM roles; AI-threat rate 14.95% of 35,964 answers, Emerging roles 19.8% against Traditional 14.8%; 49,010 survey responses, 73.4% of them answered the AI-threat question.">
+      </figure>
+      <div class="chart__text">
+        <p class="chart__q">KPI row · Three angles</p>
+        <h2>Fewer layoffs, about the same number of people</h2>
+        <div class="insight">
+          <p>In the window, layoff events fell <b>48.9%</b> against the previous 15 months, to 428, while people laid off fell only <b>1.1%</b>, to 175,648. Layoffs became less frequent but larger: the ten largest events account for 54.1% of the window's headcount.</p>
+          <p>On the other two sides, 1,500 AI postings span 14 countries and 25 job titles, and <b>14.9%</b> of developers say AI threatens their job (21.4% are not sure, 63.7% say no). Developers in emerging roles say so more often than those in traditional ones (19.8% against 14.8%).</p>
+        </div>
+        <p class="howto">Headcount totals are lower bounds: events with no disclosed headcount count as zero, and every headcount tile shows how many events disclose one.</p>
+      </div>
+    </article>
+
+    <article class="chart" id="sector-grid">
+      <figure class="static-fig zoomable">
+        <img src="img/sector-grid.webp" width="1600" height="1002" loading="lazy"
+             alt="Sector grid for the window: layoff events, people laid off, AI job postings and AI-threat rate per sector. Retail &amp; Consumer 120 events and 54,333 people, Technology &amp; Software 79 events and 56,393 people, Manufacturing &amp; Industrial 252 postings, Media &amp; Marketing 18.27% AI threat.">
+      </figure>
+      <div class="chart__text">
+        <p class="chart__q">Chart 1 · Sector grid</p>
+        <h2>Where do layoffs, AI hiring and AI worry land, by sector?</h2>
+        <p>One row per sector: layoff events and people laid off in the window, AI job postings, and the share of developers who see AI as a threat to their job. Darker = larger within the column; grey = no data, not zero.</p>
+        <div class="insight">
+          <p>Layoffs concentrate in two sectors: Retail &amp; Consumer and Technology &amp; Software carry <b>63%</b> of the window's headcount but only <b>15.8%</b> of the AI postings. The sector with the most postings, Manufacturing &amp; Industrial (252), had only 10 layoff events.</p>
+        </div>
+        <p class="howto">Grey cells are gaps in coverage: Transportation &amp; Logistics and Real Estate have no postings, Government &amp; Public Sector no layoff events, Real Estate no survey answers.</p>
+      </div>
+    </article>
+
+    <article class="chart" id="sector-threat">
+      <figure class="static-fig zoomable">
+        <img src="img/sector-threat.webp" width="1264" height="1012" loading="lazy"
+             alt="Share of developers answering that AI is a threat to their job, by sector, with 95% confidence intervals: Media &amp; Marketing about 18% (N 739) is the only sector clearly above the 14.9% overall line; Manufacturing &amp; Industrial is lowest at about 10%.">
+      </figure>
+      <div class="chart__text">
+        <p class="chart__q">Chart 2 · AI threat by sector</p>
+        <h2>Do some sectors feel more threatened by AI?</h2>
+        <p>Share of developers answering "Yes", with the 95% confidence interval as whiskers. The dashed line is the overall rate (14.9%); N = respondents in the sector.</p>
+        <div class="insight">
+          <p>Worry sits in a narrow 10–18% band. <b>Media &amp; Marketing</b> (18.3%, N = 739, 95% interval 15.5–21.1%) is the only sector clearly above the average. Technology &amp; Software and Retail &amp; Consumer, the two largest cutters, sit at the average; Manufacturing &amp; Industrial is lowest, at about 10%.</p>
+        </div>
+        <p class="howto">A gap is called clear only when the 95% interval excludes the overall rate. Survey respondents are self-selected, so the intervals understate the uncertainty.</p>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <nav class="pager" aria-label="Other dashboards">
+      <a href="../../#dashboards"><small>← Back</small><b>All dashboards</b></a>
+      <a class="pager__next" href="../layoffs/"><small>Next →</small><b>Layoffs</b></a>
+    </nav>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap footer__inner">
+    <p><a href="../../">← Back to the project</a></p>
+    <p class="muted">Sources: Layoffs.fyi tracker (via Kaggle), AI Jobs Market 2025–2026 Salaries (Kaggle), Stack Overflow Developer Survey 2025. The sources share only sector and role-family categories, so the dashboard shows parallel patterns, not causes.</p>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" hidden>
+  <button class="lightbox__close" aria-label="Close">×</button>
+  <img alt="">
+</div>
+
+<script src="../../assets/js/dashboard.js"></script>
+<script src="../../assets/js/reveal.js"></script>
+<script src="../../assets/js/main.js"></script>
+</body>
+</html>
