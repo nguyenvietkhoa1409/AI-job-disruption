@@ -9,7 +9,7 @@ The pipeline processes **55,291 raw records** from three sources. After validati
 **Authors:** [Viet Khoa Nguyen](https://github.com/nguyenvietkhoa1409) & [Mai Anh Tieu](https://github.com/maianhtieu87)
 
 <!-- TODO: Replace this placeholder with the actual path and filename of the comprehensive report in `docs/`. -->
-**Full project report:** [Technical and analytical report](https://docs.google.com/document/d/1dADruAlSlZ5CPKZZojjJrBtI_XPDpCzLmYEoH2M0dAE/edit?usp=sharing)
+**Full project report:** [Technical and analytical report](https://drive.google.com/file/d/1kQ-cRldtvz4ioalNKGUerVl7uJOeQ4dC/view?usp=sharing)
 
 ## Project at a glance
 
