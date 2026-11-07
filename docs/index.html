@@ -22,6 +22,7 @@
     <nav class="nav" aria-label="Sections">
       <a href="#sources">Data</a>
       <a href="#pipeline">Pipeline</a>
+      <a href="#categories">Categories</a>
       <a href="#warehouse">Warehouse</a>
       <a href="#topics">Topic model</a>
       <a href="#dashboards">Dashboards</a>
@@ -38,7 +39,7 @@
   <div class="wrap">
     <p class="eyebrow">End-to-end Data Engineering + Data Analytics</p>
     <h1>The tech labor market in the generative AI era: layoffs, new AI jobs and how developers feel about AI</h1>
-    <p class="lede">This project develops an end-to-end data pipeline to examine changes in the technology labor market during the generative AI era from three perspectives: workforce reductions, demand for emerging AI roles and practitioner sentiment. It is built for labor-market and workforce analysts, technology employers and recruiters, and developers and students weighing their career paths.</p>
+    <p class="lede">An end-to-end batch pipeline that integrates three public datasets (about 55,000 records) into a PostgreSQL star schema and Power BI dashboards, to compare tech layoffs, demand for new AI roles and how developers feel about AI. Built for workforce analysts, tech employers and recruiters, and developers and students choosing a career path.</p>
 
     <div class="hero__skills" aria-label="Skills demonstrated">
       <p class="hero__label">Skills demonstrated</p>
@@ -68,7 +69,7 @@
       <a href="https://github.com/nguyenvietkhoa1409">Viet Khoa Nguyen</a> &amp;
       <a href="https://github.com/maianhtieu87">Mai Anh Tieu</a></p>
     <div class="hero__actions">
-      <a class="btn" href="https://drive.google.com/file/d/1kQ-cRldtvz4ioalNKGUerVl7uJOeQ4dC/view?usp=sharing" target="_blank" rel="noopener">Read the full report</a>
+      <a class="btn" href="https://drive.google.com/file/d/1VmquvspkbcTTeaY8uYWBeI0jAiQKB644/view" target="_blank" rel="noopener">Read the full report</a>
       <a class="btn btn--ghost" href="#dashboards">See the dashboards</a>
       <a class="btn btn--ghost" href="https://github.com/nguyenvietkhoa1409/AI-job-disruption">View the code</a>
     </div>
@@ -89,7 +90,7 @@
 <section id="sources" class="section">
   <div class="wrap">
     <h2>Three questions, three sources</h2>
-    <p class="section__intro">The sources record different things at different grains, so no single file answers the question alone.</p>
+    <p class="section__intro">Each source answers one question at its own grain: one layoff event, one job posting or one survey respondent. They share no keys, so they must be integrated before they can be compared.</p>
     <div class="datasets">
       <article class="dataset dataset--cut">
         <div class="dataset__head">
@@ -146,7 +147,7 @@
       <li><b>On-demand batch.</b> Sources are static snapshots; scheduling is a single DAG parameter.</li>
       <li><b>Decoupled stages.</b> Processed files are the contract between ETL and load, so each stage reruns and is tested in isolation.</li>
       <li><b>Atomic, idempotent load.</b> One transaction on natural keys; a repeat load inserts zero rows.</li>
-      <li><b>Modeling inside the ETL.</b> NMF is an isolated survey stage; topics land as conformed categories.</li>
+      <li><b>Modeling inside the ETL.</b> NMF runs as a separate stage on the survey only; its topic labels are stored in a dimension like any other category.</li>
     </ul>
     <figure class="figure zoomable">
       <img src="assets/img/architecture.webp" width="1920" height="899" loading="lazy"
@@ -165,7 +166,7 @@
       </article>
       <article class="card">
         <h3><span class="num">3</span>Conform and transform</h3>
-        <p>Country, industry, role, experience and skill are mapped once into shared dimensions. Unknown labels are quarantined, not lumped into a catch-all. Missing values are not imputed.</p>
+        <p>Country, industry, role, experience and skill are mapped once into shared dimensions. Labels missing from a map are quarantined, not guessed. Missing values are not imputed. <a href="#categories">See the mapping ↓</a></p>
       </article>
     </div>
 
@@ -185,11 +186,63 @@
   </div>
 </section>
 
+<!-- CATEGORIES -->
+<section id="categories" class="section">
+  <div class="wrap">
+    <h2>Shared category mapping</h2>
+    <p class="section__intro section__intro--tight">The three sources describe the same things in different words. We map each shared attribute once to a single list of categories that every source uses, so layoffs, postings and survey answers can be grouped by the same country, sector and role. A label missing from the map is quarantined rather than guessed.</p>
+    <div class="maps">
+      <article class="map">
+        <p class="map__tag">Country</p>
+        <p class="map__flow"><span class="map__from"><b>188</b> spellings</span><span class="map__arrow" aria-label="mapped to">→</span><span class="map__to"><b>175</b> countries</span></p>
+        <h3 class="map__title"><span>One name per country</span></h3>
+        <p class="map__desc">Maps and country filters cover all three sources.</p>
+        <p class="map__src"><span class="src src--cut">Layoffs</span><span class="src src--create">AI Jobs</span><span class="src src--feel">Survey</span></p>
+      </article>
+      <article class="map">
+        <p class="map__tag">Industry</p>
+        <p class="map__flow"><span class="map__from"><b>46</b> labels</span><span class="map__arrow" aria-label="mapped to">→</span><span class="map__to"><b>12</b> sectors</span></p>
+        <h3 class="map__title"><span>Twelve sectors for every source</span></h3>
+        <p class="map__desc">Cuts, hiring and worry can be compared sector by sector.</p>
+        <p class="map__src"><span class="src src--cut">Layoffs</span><span class="src src--create">AI Jobs</span><span class="src src--feel">Survey</span></p>
+      </article>
+      <article class="map">
+        <p class="map__tag">Experience</p>
+        <p class="map__flow"><span class="map__from">labels &amp; years</span><span class="map__arrow" aria-label="mapped to">→</span><span class="map__to"><b>4</b> levels</span></p>
+        <h3 class="map__title"><span>The same four bands</span></h3>
+        <p class="map__desc">Entry 0–2, Mid 3–5, Senior 6–9 and Lead 10+ years in both sources.</p>
+        <p class="map__src"><span class="src src--create">AI Jobs</span><span class="src src--feel">Survey</span></p>
+      </article>
+      <article class="map map--role">
+        <p class="map__tag">Role family</p>
+        <p class="map__flow"><span class="map__from"><b>32</b> developer types</span><span class="map__arrow" aria-label="mapped to">→</span><span class="map__to"><b>12</b> families</span></p>
+        <h3 class="map__title"><span>Same role, two views</span></h3>
+        <p class="map__desc">Puts AI hiring demand next to developer worry for the same kind of role; 9 of the postings’ 12 families have a survey match.</p>
+        <p class="map__src"><span class="src src--create">AI Jobs</span><span class="src src--feel">Survey</span></p>
+      </article>
+      <article class="map map--role">
+        <p class="map__tag">Role group</p>
+        <p class="map__flow"><span class="map__from"><b>57</b> roles</span><span class="map__arrow" aria-label="mapped to">→</span><span class="map__to"><b>2</b> groups</span></p>
+        <h3 class="map__title"><span>Emerging or Traditional</span></h3>
+        <p class="map__desc">Separates AI-native roles from the rest. Every posting title is Emerging, so the split is compared within the survey.</p>
+        <p class="map__src"><span class="src src--create">AI Jobs</span><span class="src src--feel">Survey</span></p>
+      </article>
+      <article class="map">
+        <p class="map__tag">Skill</p>
+        <p class="map__flow"><span class="map__from"><b>93</b> raw skills</span><span class="map__arrow" aria-label="mapped to">→</span><span class="map__to"><b>91</b> skills</span></p>
+        <h3 class="map__title"><span>No skill counted twice</span></h3>
+        <p class="map__desc">Near-duplicates are merged, such as “LLM Fine-tuning” into “Fine-tuning”.</p>
+        <p class="map__src"><span class="src src--create">AI Jobs</span></p>
+      </article>
+    </div>
+  </div>
+</section>
+
 <!-- WAREHOUSE -->
-<section id="warehouse" class="section">
+<section id="warehouse" class="section section--alt">
   <div class="wrap">
     <h2>The warehouse</h2>
-    <p class="section__intro section__intro--wide">We use a <strong class="hl">star schema</strong> so that three sources with no shared keys can be analyzed together. As a fact constellation, each source keeps its fact table at its native grain and joins through the same conformed dimensions, so a cross-source comparison is a single group-by. Dimensions stay flat, not snowflaked: the largest holds 2,969 rows, so normalization would add joins without saving space.</p>
+    <p class="section__intro section__intro--wide">We use a <strong class="hl">star schema</strong> because the warehouse serves analytics: each fact table is one join away from its dimensions, so queries stay fast and fit the model Power BI expects. The three fact tables share the same dimensions, so country, industry, role and date mean the same thing on every dashboard.</p>
 
     <div class="schema">
       <div class="schema__col">
@@ -221,23 +274,23 @@
       <div class="schema__col schema__notes">
         <h3 class="schema__title">Design choices</h3>
         <ul class="ticks">
-          <li><b>DDL defined once</b> in SQL; a test keeps the Python schema contract in sync.</li>
-          <li><b>Composite natural key</b> for layoffs (company + date + location); without location 5 events would collide.</li>
-          <li><b>Junk dimension:</b> 49,010 responses map to 641 combinations of the AI answers.</li>
-          <li><b>Bridge table</b> unnests posting skills into 9,419 pairs.</li>
-          <li><b>Materialized mart</b> of 789 rows reconciles exactly to the 4,582 events.</li>
+          <li><b>Date dimension:</b> a continuous 2020–2030 calendar, used as the Power BI date table.</li>
+          <li><b>Layoff key:</b> company + date + location, so no two events collide.</li>
+          <li><b>Junk dimension:</b> four AI answers in 641 combinations, one key per response.</li>
+          <li><b>Bridge table:</b> 9,419 posting–skill pairs, so skills can be filtered.</li>
+          <li><b>Mart:</b> 789 precomputed country-month rows for the map.</li>
         </ul>
       </div>
     </div>
-    <p class="note">Row counts are from the first load of the current raw files; <code>dim_date</code> is a continuous calendar keyed YYYYMMDD.</p>
+    <p class="note">Row counts are from the first load of the current raw files.</p>
   </div>
 </section>
 
 <!-- TOPICS -->
-<section id="topics" class="section section--alt">
+<section id="topics" class="section">
   <div class="wrap">
     <h2>Topic modeling of free-text answers</h2>
-    <p class="section__intro section__intro--tight">The survey asked developers, in their own words, which skills they expect AI not to replace. The free-text answers go through <strong class="hl">text preprocessing</strong> before modeling, turning 15,684 of them into ten themes that can be counted and compared like any other survey answer.</p>
+    <p class="section__intro section__intro--tight">The survey asked developers, in their own words, which skills they expect AI not to replace. After <strong class="hl">text preprocessing</strong>, 15,684 answers are weighted with TF-IDF and grouped by NMF into ten topics, which can then be counted like any other survey answer.</p>
     <ul class="ticks ticks--cols ticks--arch">
       <li><b>Clean.</b> 22,520 answers; 22,491 remain after quality rules and a spam filter that blanks repetitive junk text.</li>
       <li><b>Filter.</b> 6,807 answers of four words or fewer are set aside as too short to carry a theme.</li>
@@ -257,16 +310,16 @@
           <caption>Answers per topic, share of 15,684 modeled answers</caption>
           <thead><tr><th>Topic</th><th>Share</th><th>Answers</th></tr></thead>
           <tbody>
-            <tr><td>Business / domain understanding</td><td data-value="14.7">14.7%</td><td>2,301</td></tr>
-            <tr><td>Code reading &amp; writing</td><td data-value="14.3">14.3%</td><td>2,237</td></tr>
-            <tr><td>AI capability skepticism</td><td data-value="13.4">13.4%</td><td>2,098</td></tr>
-            <tr><td>Complex problem solving</td><td data-value="13.4">13.4%</td><td>2,097</td></tr>
-            <tr><td>Architecture / system design</td><td data-value="10.9">10.9%</td><td>1,705</td></tr>
-            <tr><td>Problem solving</td><td data-value="9.9">9.9%</td><td>1,557</td></tr>
-            <tr><td>Soft skills / communication</td><td data-value="7.2">7.2%</td><td>1,135</td></tr>
-            <tr><td>Critical thinking</td><td data-value="7.1">7.1%</td><td>1,112</td></tr>
-            <tr><td>High- vs low-level design</td><td data-value="4.7">4.7%</td><td>733</td></tr>
-            <tr><td>Skills will remain valuable</td><td data-value="4.6">4.6%</td><td>723</td></tr>
+            <tr><td>Business / domain understanding</td><td data-value="14.6">14.6%</td><td>2,289</td></tr>
+            <tr><td>Code reading &amp; writing</td><td data-value="14.3">14.3%</td><td>2,248</td></tr>
+            <tr><td>Complex problem solving</td><td data-value="13.4">13.4%</td><td>2,104</td></tr>
+            <tr><td>AI capability skepticism</td><td data-value="13.4">13.4%</td><td>2,097</td></tr>
+            <tr><td>Architecture / system design</td><td data-value="10.8">10.8%</td><td>1,694</td></tr>
+            <tr><td>Problem solving</td><td data-value="9.9">9.9%</td><td>1,555</td></tr>
+            <tr><td>Soft skills / communication</td><td data-value="7.2">7.2%</td><td>1,131</td></tr>
+            <tr><td>Critical thinking</td><td data-value="7.1">7.1%</td><td>1,110</td></tr>
+            <tr><td>High- vs low-level design</td><td data-value="4.7">4.7%</td><td>736</td></tr>
+            <tr><td>Skills will remain valuable</td><td data-value="4.6">4.6%</td><td>720</td></tr>
           </tbody>
         </table>
         <p class="note">Share of 15,684 modeled answers, each counted once in its dominant topic. Hover a bar for the count.</p>
@@ -277,14 +330,14 @@
           <h3 class="story__title"><span>Business understanding tops the list</span></h3>
           <p class="story__desc">The skills developers most often name as safe from AI. Soft skills and critical thinking follow at about 7% each.</p>
           <dl class="dataset__rows story__rows">
-            <div><dt>Business / domain</dt><dd><b>14.7%</b> <span>of answers</span></dd></div>
+            <div><dt>Business / domain</dt><dd><b>14.6%</b> <span>of answers</span></dd></div>
             <div><dt>Code reading &amp; writing</dt><dd><b>14.3%</b> <span>of answers</span></dd></div>
             <div><dt>Complex problems</dt><dd><b>13.4%</b> <span>of answers</span></dd></div>
           </dl>
         </div>
         <div class="story">
           <p class="story__kicker">Skepticism</p>
-          <h3 class="story__title"><span>One answer in seven doubts AI itself</span></h3>
+          <h3 class="story__title"><span>About one answer in seven doubts what AI can do</span></h3>
           <p class="story__desc">Instead of naming a skill, these answers question what AI tools can actually do.</p>
           <dl class="dataset__rows story__rows">
             <div><dt>Name no skill</dt><dd><b>13.4%</b> <span>of answers</span></dd></div>
@@ -305,7 +358,7 @@
 </section>
 
 <!-- DASHBOARDS -->
-<section id="dashboards" class="section">
+<section id="dashboards" class="section section--alt">
   <div class="wrap">
     <h2>Dashboards</h2>
     <p class="section__intro section__intro--wide">Five Power BI dashboards on seven pages. Open a dashboard to see each chart on its own, switch between its pages and try its toggles. Every chart title is a question and its caption the answer; every rate carries its N; segments under 30 records are greyed out; "no data" is drawn grey, never as zero.</p>
@@ -322,7 +375,7 @@
 </section>
 
 <!-- STACK -->
-<section id="stack" class="section section--alt">
+<section id="stack" class="section">
   <div class="wrap">
     <h2>Stack and engineering practice</h2>
     <div class="cards cards--4">
@@ -341,7 +394,7 @@
 </section>
 
 <!-- RUN -->
-<section id="run" class="section">
+<section id="run" class="section section--alt">
   <div class="wrap">
     <h2>Run it yourself</h2>
     <p class="section__intro">Raw files are not committed. Place them under <code>data/raw/</code> (see the README), then:</p>
