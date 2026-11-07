@@ -114,7 +114,7 @@ The warehouse keeps the three source subject areas separate while sharing confor
 
 ## Topic modeling
 
-The survey's `AIOpen` field contains optional free-text responses about skills developers expect to remain valuable as AI advances. Of 22,511 responses that passed quality and spam checks, 15,698 remained after short answers were filtered.
+The survey's `AIOpen` field contains optional free-text responses about skills developers expect to remain valuable as AI advances. Of 22,491 responses that passed quality and spam checks, 15,684 remained after short answers (four words or fewer) were filtered.
 
 The pipeline converts answers into TF-IDF features and applies NMF to identify ten themes. Labels use anchor-word matching rather than arbitrary topic numbers. If an anchor set matches no topic or multiple topics, the pipeline stops for review instead of silently assigning potentially incorrect labels. The full report documents the filtering choices, topic terms, anchor rules, and model-versioning procedure.
 
