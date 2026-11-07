@@ -6,7 +6,8 @@
 .crumbs span { margin: 0 6px; color: #7f8da3; }
 
 .dash-hero { padding: 56px 0 44px; }
-.dash-hero h1 { max-width: 30ch; font-size: clamp(1.8rem, 3.8vw, 2.6rem); }
+.dash-hero h1 { font-size: clamp(1.8rem, 3.8vw, 2.6rem); }
+.dash-hero .lede { max-width: none; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 18px; font-size: .88rem; color: #b5c1d3; }
 .chip { border: 1px solid rgba(255,255,255,.25); border-radius: 999px; padding: .2em .8em; color: #e5ebf5; }
 
@@ -17,11 +18,25 @@
 .chart { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 36px; align-items: start; padding: 56px 0; border-top: 1px solid var(--line); }
 .chart:first-of-type { border-top: 0; padding-top: 0; }
 .chart:last-of-type { padding-bottom: 0; }
-.chart__text h2 { font-size: 1.45rem; }
 .chart__text p, .chart__text li { color: var(--ink-2); }
-.chart__q { text-transform: uppercase; letter-spacing: .08em; font-size: .75rem; font-weight: 700; color: var(--purple); margin-bottom: .5em; }
-.insight { background: var(--bg-alt); border-left: 4px solid var(--amber); border-radius: 0 10px 10px 0; padding: 14px 18px; margin: 16px 0; }
-.insight p:last-child { margin: 0; }
+/* Chart analysis in the "three sources" style: solid tag, inverted title, labelled rows */
+.chart__q { display: inline-block; margin: 0 0 8px; padding: .35em .75em; font-size: .75rem; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase; color: #fff !important; background: var(--navy); }
+.dash-theme--cut .chart__q { background: var(--purple); }
+.dash-theme--feel .chart__q { background: var(--magenta); }
+.chart__title { margin: 0 0 14px; font-size: 1.3rem; line-height: 1.6; }
+.chart__title span { background: var(--navy-900); color: #fff; padding: .2em .5em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.chart__desc { margin: 0 0 14px; font-size: .98rem; }
+.chart__rows { margin: 0; }
+.chart__rows > div { padding: 14px 0; border-top: 1px solid var(--line); }
+.chart__rows dt { margin-bottom: 6px; font-size: .74rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.chart__rows dd { margin: 0; color: var(--ink-2); line-height: 1.6; }
+.chart__rows dd p { margin: 0 0 .6em; }
+.chart__rows dd p:last-child { margin-bottom: 0; }
+.chart__rows dd b { color: var(--ink); }
+.chart__rows .insight:empty { display: none; }
+.chart__rows .insight:not(:empty) + p { margin-top: .6em; }
+.chart__note { font-size: .88rem; color: var(--ink-3) !important; }
 .howto { font-size: .88rem; color: var(--ink-3); }
 
 /* Viewer */
@@ -138,3 +153,23 @@ a.page-btn:hover, a.page-btn:focus-visible { background: #dcaa4e; color: var(--n
 button.dash-card__media { border: 0; padding: 0; background: none; cursor: zoom-in; width: 100%; display: block; }
 /* in-page links land below the top bar + sticky page tabs */
 html:has(.page-tabs) { scroll-padding-top: 140px; }
+
+/* Wide, short figures: figure across the full width, analysis below in two columns
+   (tag, title and description left; Finding / Note rows right), as in "three sources". */
+.chart--wide { grid-template-columns: 1fr; gap: 28px; }
+.chart--wide > :not(.chart__text) { order: -1; }
+.chart--wide .chart__text { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-rows: auto auto 1fr; column-gap: 48px; align-items: start; }
+.chart--wide .chart__text > * { grid-column: 1; }
+.chart--wide .chart__q { justify-self: start; }
+.chart--wide .chart__rows { grid-column: 2; grid-row: 1 / span 3; }
+.chart--wide .chart__rows > div { display: grid; grid-template-columns: 7em 1fr; gap: 16px; align-items: baseline; }
+.chart--wide .chart__rows > div:first-child { border-top: 0; padding-top: 4px; }
+.chart--wide .chart__rows dt { margin: 0; }
+@media (max-width: 960px) {
+  .chart--wide .chart__text { display: block; }
+  .chart--wide .chart__rows > div:first-child { border-top: 1px solid var(--line); padding-top: 14px; }
+}
+@media (max-width: 640px) {
+  .chart--wide .chart__rows > div { display: block; }
+  .chart--wide .chart__rows dt { margin-bottom: 6px; }
+}

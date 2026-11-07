@@ -19,20 +19,19 @@
       <a href="../../#pipeline">Pipeline</a>
       <a href="../../#warehouse">Warehouse</a>
       <a href="../../#dashboards">Dashboards</a>
-      <a href="../../#findings">Findings</a>
     </nav>
     <a class="btn btn--small" href="https://github.com/nguyenvietkhoa1409/AI-job-disruption">GitHub</a>
   </div>
 </header>
 
-<main>
+<main class="dash-theme--all">
 
 <section class="hero dash-hero">
   <div class="wrap">
     <p class="crumbs"><a href="../../">Home</a><span>/</span><a href="../../#dashboards">Dashboards</a><span>/</span>Overview</p>
     <p class="eyebrow">Dashboard 1 of 5 · All three sources</p>
     <h1>What is being cut, created and felt, and where the three meet</h1>
-    <p class="lede">The three sources side by side, by sector. Layoffs and postings cover the 15 months from 2025-01 to 2026-03, the period the postings cover, compared with the 15 months before. The survey has no respondent-level date, so it is read as one 2025 snapshot.</p>
+    <p class="lede">The three sources side by side, by sector. Layoffs and postings cover the 15 months from <span class="nw">2025-01</span> to <span class="nw">2026-03</span>, the period the postings cover, compared with the 15 months before. The survey has no respondent-level date, so it is read as one 2025 snapshot.</p>
     <div class="chips"><span>Window:</span>
       <span class="chip">2025-01 to 2026-03</span>
     </div>
@@ -61,19 +60,21 @@
 <section class="section section--alt">
   <div class="wrap">
 
-    <article class="chart" id="kpis">
+    <article class="chart chart--wide" id="kpis">
       <figure class="static-fig zoomable">
         <img src="img/kpis.webp" width="1600" height="267"
              alt="KPI row: 175,648 people laid off (−1.1% vs prior 15 months) in 428 events (−48.9%), with monthly bars for the prior 15 months in grey and the window in amber; 1,500 AI job postings, 21.8% LLM roles; AI-threat rate 14.95% of 35,964 answers, Emerging roles 19.8% against Traditional 14.8%; 49,010 survey responses, 73.4% of them answered the AI-threat question.">
       </figure>
       <div class="chart__text">
         <p class="chart__q">KPI row · Three angles</p>
-        <h2>Fewer layoffs, about the same number of people</h2>
-        <div class="insight">
-          <p>In the window, layoff events fell <b>48.9%</b> against the previous 15 months, to 428, while people laid off fell only <b>1.1%</b>, to 175,648. Layoffs became less frequent but larger: the ten largest events account for 54.1% of the window's headcount.</p>
+        <h2 class="chart__title"><span>Fewer layoffs, about the same number of people</span></h2>
+        <dl class="chart__rows">
+          <div><dt>Finding</dt><dd><div class="insight">
+<p>In the window, layoff events fell <b>48.9%</b> against the previous 15 months, to 428, while people laid off fell only <b>1.1%</b>, to 175,648. Layoffs became less frequent but larger: the ten largest events account for 54.1% of the window's headcount.</p>
           <p>On the other two sides, 1,500 AI postings span 14 countries and 25 job titles, and <b>14.9%</b> of developers say AI threatens their job (21.4% are not sure, 63.7% say no). Developers in emerging roles say so more often than those in traditional ones (19.8% against 14.8%).</p>
-        </div>
-        <p class="howto">Headcount totals are lower bounds: events with no disclosed headcount count as zero, and every headcount tile shows how many events disclose one.</p>
+</div></dd></div>
+          <div><dt>Note</dt><dd class="chart__note">Headcount totals are lower bounds: events with no disclosed headcount count as zero, and every headcount tile shows how many events disclose one.</dd></div>
+        </dl>
       </div>
     </article>
 
@@ -84,12 +85,14 @@
       </figure>
       <div class="chart__text">
         <p class="chart__q">Chart 1 · Sector grid</p>
-        <h2>Where do layoffs, AI hiring and AI worry land, by sector?</h2>
-        <p>One row per sector: layoff events and people laid off in the window, AI job postings, and the share of developers who see AI as a threat to their job. Darker = larger within the column; grey = no data, not zero.</p>
-        <div class="insight">
-          <p>Layoffs concentrate in two sectors: Retail &amp; Consumer and Technology &amp; Software carry <b>63%</b> of the window's headcount but only <b>15.8%</b> of the AI postings. The sector with the most postings, Manufacturing &amp; Industrial (252), had only 10 layoff events.</p>
-        </div>
-        <p class="howto">Grey cells are gaps in coverage: Transportation &amp; Logistics and Real Estate have no postings, Government &amp; Public Sector no layoff events, Real Estate no survey answers.</p>
+        <h2 class="chart__title"><span>Where do layoffs, AI hiring and AI worry land, by sector?</span></h2>
+        <p class="chart__desc">One row per sector: layoff events and people laid off in the window, AI job postings, and the share of developers who see AI as a threat to their job. Darker = larger within the column; grey = no data, not zero.</p>
+        <dl class="chart__rows">
+          <div><dt>Finding</dt><dd><div class="insight">
+<p>Layoffs concentrate in two sectors: Retail &amp; Consumer and Technology &amp; Software carry <b>63%</b> of the window's headcount but only <b>15.8%</b> of the AI postings. The sector with the most postings, Manufacturing &amp; Industrial (252), had only 10 layoff events.</p>
+</div></dd></div>
+          <div><dt>Note</dt><dd class="chart__note">Grey cells are gaps in coverage: Transportation &amp; Logistics and Real Estate have no postings, Government &amp; Public Sector no layoff events, Real Estate no survey answers.</dd></div>
+        </dl>
       </div>
     </article>
 
@@ -100,12 +103,14 @@
       </figure>
       <div class="chart__text">
         <p class="chart__q">Chart 2 · AI threat by sector</p>
-        <h2>Do some sectors feel more threatened by AI?</h2>
-        <p>Share of developers answering "Yes", with the 95% confidence interval as whiskers. The dashed line is the overall rate (14.9%); N = respondents in the sector.</p>
-        <div class="insight">
-          <p>Worry sits in a narrow 10–18% band. <b>Media &amp; Marketing</b> (18.3%, N = 739, 95% interval 15.5–21.1%) is the only sector clearly above the average. Technology &amp; Software and Retail &amp; Consumer, the two largest cutters, sit at the average; Manufacturing &amp; Industrial is lowest, at about 10%.</p>
-        </div>
-        <p class="howto">A gap is called clear only when the 95% interval excludes the overall rate. Survey respondents are self-selected, so the intervals understate the uncertainty.</p>
+        <h2 class="chart__title"><span>Do some sectors feel more threatened by AI?</span></h2>
+        <p class="chart__desc">Share of developers answering "Yes", with the 95% confidence interval as whiskers. The dashed line is the overall rate (14.9%); N = respondents in the sector.</p>
+        <dl class="chart__rows">
+          <div><dt>Finding</dt><dd><div class="insight">
+<p>Worry sits in a narrow 10–18% band. <b>Media &amp; Marketing</b> (18.3%, N = 739, 95% interval 15.5–21.1%) is the only sector clearly above the average. Technology &amp; Software and Retail &amp; Consumer, the two largest cutters, sit at the average; Manufacturing &amp; Industrial is lowest, at about 10%.</p>
+</div></dd></div>
+          <div><dt>Note</dt><dd class="chart__note">A gap is called clear only when the 95% interval excludes the overall rate. Survey respondents are self-selected, so the intervals understate the uncertainty.</dd></div>
+        </dl>
       </div>
     </article>
 

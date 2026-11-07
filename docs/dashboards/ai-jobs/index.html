@@ -19,20 +19,19 @@
       <a href="../../#pipeline">Pipeline</a>
       <a href="../../#warehouse">Warehouse</a>
       <a href="../../#dashboards">Dashboards</a>
-      <a href="../../#findings">Findings</a>
     </nav>
     <a class="btn btn--small" href="https://github.com/nguyenvietkhoa1409/AI-job-disruption">GitHub</a>
   </div>
 </header>
 
-<main>
+<main class="dash-theme--create">
 
 <section class="hero dash-hero">
   <div class="wrap">
     <p class="crumbs"><a href="../../">Home</a><span>/</span><a href="../../#dashboards">Dashboards</a><span>/</span>Role &amp; Creation</p>
     <p class="eyebrow">Dashboard 3 of 5 · What is being created</p>
     <h1>The AI roles on offer and what they pay</h1>
-    <p class="lede" data-page-lede>Which AI role families grow fastest and whether they pay more, how pay varies inside AI Engineering, and what a degree and experience add. 1,500 postings, 2025-01 to 2026-03.</p>
+    <p class="lede" data-page-lede>Which AI role families grow fastest and whether they pay more, how pay varies inside AI Engineering, and what a degree and experience add. 1,500 postings, <span class="nw">2025-01</span> to <span class="nw">2026-03</span>.</p>
     <div class="chips"><span>Filters on both pages:</span>
       <span class="chip">Job category</span><span class="chip">Experience level</span><span class="chip">Country</span><span class="chip">Sector</span><span class="chip">Company size</span><span class="chip">Education</span><span class="chip">LLM role</span>
     </div>
@@ -108,27 +107,31 @@
       </div>
       <div class="chart__text">
         <p class="chart__q">Chart 1 · Role families</p>
-        <h2>Which kinds of AI role are growing fastest, and do they pay more?</h2>
-        <p>Each bubble is one of the 12 role families: median posted salary across, the metric chosen with the switch up. Size = postings (N); purple = AI Engineering, the largest family (N = 736).</p>
-        <div class="insight viewer__note-target"></div>
-        <p>Outside AI Engineering each family has only 50–127 postings. Demand growth, demand score and pay bump are fields supplied with the dataset, not trends we measured, so we read them directionally.</p>
-        <p class="howto">Try the switch above the chart; it behaves like the toggle in the Power BI report.</p>
+        <h2 class="chart__title"><span>Which kinds of AI role are growing fastest, and do they pay more?</span></h2>
+        <p class="chart__desc">Each bubble is one of the 12 role families: median posted salary across, the metric chosen with the switch up. Size = postings (N); purple = AI Engineering, the largest family (N = 736).</p>
+        <dl class="chart__rows">
+          <div><dt>Finding</dt><dd><div class="insight viewer__note-target"></div>
+<p>Outside AI Engineering each family has only 50–127 postings. Demand growth, demand score and pay bump are fields supplied with the dataset, not trends we measured, so we read them directionally.</p></dd></div>
+          <div><dt>Note</dt><dd class="chart__note">Try the switch above the chart; it behaves like the toggle in the Power BI report.</dd></div>
+        </dl>
       </div>
     </article>
 
-    <article class="chart" id="salary-by-title">
+    <article class="chart chart--wide" id="salary-by-title">
       <figure class="static-fig zoomable">
         <img src="img/roles-pay/salary-by-title.webp" width="1484" height="644" loading="lazy"
              alt="Salary ranges of the 12 AI Engineering job titles, with the median as a dot: LLM Engineer $232k, Senior ML Engineer $227k, RAG Engineer $215k, down to Prompt Engineer $144k and AI Engineer $141k.">
       </figure>
       <div class="chart__text">
         <p class="chart__q">Chart 2 · Inside AI Engineering</p>
-        <h2>Which AI Engineering jobs pay most?</h2>
-        <p>The 12 job titles of the AI Engineering family. The dot and label are the median posted salary, the bar the spread of salaries; N = postings. Amber = the highest-paid title.</p>
-        <div class="insight">
-          <p>The title matters more than the family. Medians run from <b>$141k</b> (AI Engineer) to <b>$232k</b> (LLM Engineer), and LLM titles alone span $144k (Prompt Engineer) to $232k, so the "AI" or "LLM" label says little about pay.</p>
-        </div>
-        <p class="howto">Each title has 46–75 postings, so neighbouring medians a few thousand dollars apart are not a reliable ranking.</p>
+        <h2 class="chart__title"><span>Which AI Engineering jobs pay most?</span></h2>
+        <p class="chart__desc">The 12 job titles of the AI Engineering family. The dot and label are the median posted salary, the bar the spread of salaries; N = postings. Amber = the highest-paid title.</p>
+        <dl class="chart__rows">
+          <div><dt>Finding</dt><dd><div class="insight">
+<p>The title matters more than the family. Medians run from <b>$141k</b> (AI Engineer) to <b>$232k</b> (LLM Engineer), and LLM titles alone span $144k (Prompt Engineer) to $232k, so the "AI" or "LLM" label says little about pay.</p>
+</div></dd></div>
+          <div><dt>Note</dt><dd class="chart__note">Each title has 46–75 postings, so neighbouring medians a few thousand dollars apart are not a reliable ranking.</dd></div>
+        </dl>
       </div>
     </article>
 
@@ -139,12 +142,14 @@
       </figure>
       <div class="chart__text">
         <p class="chart__q">Chart 3 · Degree</p>
-        <h2>Does a higher degree pay more?</h2>
-        <p>Median posted salary by the degree a posting asks for, with the salary range as whiskers. Amber = the highest median.</p>
-        <div class="insight">
-          <p>Somewhat, but less than experience. A PhD posting has a median of <b>$204.5k</b>, roughly 16% above a Bachelor's ($177k), and a Bootcamp posting ($176k) is level with a Bachelor's. The ranges overlap heavily.</p>
-        </div>
-        <p class="howto">The degree is what the posting asks for, not what the person hired holds.</p>
+        <h2 class="chart__title"><span>Does a higher degree pay more?</span></h2>
+        <p class="chart__desc">Median posted salary by the degree a posting asks for, with the salary range as whiskers. Amber = the highest median.</p>
+        <dl class="chart__rows">
+          <div><dt>Finding</dt><dd><div class="insight">
+<p>Somewhat, but less than experience. A PhD posting has a median of <b>$204.5k</b>, roughly 16% above a Bachelor's ($177k), and a Bootcamp posting ($176k) is level with a Bachelor's. The ranges overlap heavily.</p>
+</div></dd></div>
+          <div><dt>Note</dt><dd class="chart__note">The degree is what the posting asks for, not what the person hired holds.</dd></div>
+        </dl>
       </div>
     </article>
 
@@ -155,12 +160,14 @@
       </figure>
       <div class="chart__text">
         <p class="chart__q">Chart 4 · Experience</p>
-        <h2>How much does experience add?</h2>
-        <p>Median posted salary by experience level, with the range as whiskers. The amber pills are the gap to Entry.</p>
-        <div class="insight">
-          <p>Seniority is the largest pay lever on this page. The median rises from <b>$145k</b> at Entry to <b>$238k</b> at Lead (<b>+64%</b>); the Mid and Senior steps are +11.7% and +43.4%. Most of the gain comes between Mid and Senior.</p>
-        </div>
-        <p class="howto">Levels: Entry 0–2 years, Mid 3–5, Senior 6–9, Lead 10 or more.</p>
+        <h2 class="chart__title"><span>How much does experience add?</span></h2>
+        <p class="chart__desc">Median posted salary by experience level, with the range as whiskers. The amber pills are the gap to Entry.</p>
+        <dl class="chart__rows">
+          <div><dt>Finding</dt><dd><div class="insight">
+<p>Seniority is the largest pay lever on this page. The median rises from <b>$145k</b> at Entry to <b>$238k</b> at Lead (<b>+64%</b>); the Mid and Senior steps are +11.7% and +43.4%. Most of the gain comes between Mid and Senior.</p>
+</div></dd></div>
+          <div><dt>Note</dt><dd class="chart__note">Levels: Entry 0–2 years, Mid 3–5, Senior 6–9, Lead 10 or more.</dd></div>
+        </dl>
       </div>
     </article>
 
@@ -199,12 +206,14 @@
       </figure>
       <div class="chart__text">
         <p class="chart__q">Chart 1 · Skills by role family</p>
-        <h2>Which skills define which kinds of role?</h2>
-        <p>Share of a family's postings that require each skill. Darker = a larger share; grey = no posting in that family requires the skill.</p>
-        <div class="insight">
-          <p>A common core, then family-specific skills. Python is required by <b>66–82%</b> of postings wherever it appears, yet Governance, Product and Infrastructure list it nowhere. Cloud is tied to Infrastructure, Architecture and ML Operations (<b>76–81%</b>), SQL to Business (82%) and Data Engineering (76%), and PyTorch to Research (<b>78%</b>). Product stands out on Agile (90%).</p>
-        </div>
-        <p class="howto">Family sizes differ a lot: AI Engineering has 736 postings, the smallest families about 50.</p>
+        <h2 class="chart__title"><span>Which skills define which kinds of role?</span></h2>
+        <p class="chart__desc">Share of a family's postings that require each skill. Darker = a larger share; grey = no posting in that family requires the skill.</p>
+        <dl class="chart__rows">
+          <div><dt>Finding</dt><dd><div class="insight">
+<p>A common core, then family-specific skills. Python is required by <b>66–82%</b> of postings wherever it appears, yet Governance, Product and Infrastructure list it nowhere. Cloud is tied to Infrastructure, Architecture and ML Operations (<b>76–81%</b>), SQL to Business (82%) and Data Engineering (76%), and PyTorch to Research (<b>78%</b>). Product stands out on Agile (90%).</p>
+</div></dd></div>
+          <div><dt>Note</dt><dd class="chart__note">Family sizes differ a lot: AI Engineering has 736 postings, the smallest families about 50.</dd></div>
+        </dl>
       </div>
     </article>
 
@@ -215,28 +224,32 @@
       </figure>
       <div class="chart__text">
         <p class="chart__q">Chart 2 · Most requested</p>
-        <h2>Which skills are asked for most?</h2>
-        <p>Skills with at least 30 postings, ranked by postings, with the average demand score and the median salary of the postings that ask for them.</p>
-        <div class="insight">
-          <p>Python leads by a wide margin: <b>942</b> of the 1,500 postings, more than twice Cloud (444) and SQL (422). Two soft skills follow, Communication (365) and Leadership (363). Salaries barely differ between the top skills ($173k–$180k).</p>
-        </div>
-        <p class="howto">The salary describes the roles that ask for the skill, not the value of the skill itself. The image shows the top six rows; in Power BI the table scrolls and sorts by any column.</p>
+        <h2 class="chart__title"><span>Which skills are asked for most?</span></h2>
+        <p class="chart__desc">Skills with at least 30 postings, ranked by postings, with the average demand score and the median salary of the postings that ask for them.</p>
+        <dl class="chart__rows">
+          <div><dt>Finding</dt><dd><div class="insight">
+<p>Python leads by a wide margin: <b>942</b> of the 1,500 postings, more than twice Cloud (444) and SQL (422). Two soft skills follow, Communication (365) and Leadership (363). Salaries barely differ between the top skills ($173k–$180k).</p>
+</div></dd></div>
+          <div><dt>Note</dt><dd class="chart__note">The salary describes the roles that ask for the skill, not the value of the skill itself. The image shows the top six rows; in Power BI the table scrolls and sorts by any column.</dd></div>
+        </dl>
       </div>
     </article>
 
-    <article class="chart" id="ai-eng-skills">
+    <article class="chart chart--wide" id="ai-eng-skills">
       <figure class="static-fig zoomable">
         <img src="img/skills/ai-eng-skills.webp" width="1105" height="513" loading="lazy"
              alt="Share of AI Engineering postings requiring each skill: Python 77%, PyTorch 36%, Fine-tuning 28%, Cloud 26%, SQL 24%, Research 23%, Linux 22%, Problem Solving 22%.">
       </figure>
       <div class="chart__text">
         <p class="chart__q">Chart 3 · AI Engineering</p>
-        <h2>What do AI Engineering postings ask for?</h2>
-        <p>Share of the 736 AI Engineering postings that require each skill, top eight.</p>
-        <div class="insight">
-          <p>Python is the only skill most AI Engineering postings require (<b>77%</b>). Everything after it is asked for by about a third or less: PyTorch 36%, Fine-tuning 28%, Cloud 26%.</p>
-        </div>
-        <p class="howto">Fine-tuning ranks third here but is not among the 12 skills of the heatmap, which lists the skills most requested across all families.</p>
+        <h2 class="chart__title"><span>What do AI Engineering postings ask for?</span></h2>
+        <p class="chart__desc">Share of the 736 AI Engineering postings that require each skill, top eight.</p>
+        <dl class="chart__rows">
+          <div><dt>Finding</dt><dd><div class="insight">
+<p>Python is the only skill most AI Engineering postings require (<b>77%</b>). Everything after it is asked for by about a third or less: PyTorch 36%, Fine-tuning 28%, Cloud 26%.</p>
+</div></dd></div>
+          <div><dt>Note</dt><dd class="chart__note">Fine-tuning ranks third here but is not among the 12 skills of the heatmap, which lists the skills most requested across all families.</dd></div>
+        </dl>
       </div>
     </article>
 

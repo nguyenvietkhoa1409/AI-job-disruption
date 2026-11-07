@@ -19,13 +19,12 @@
       <a href="../../#pipeline">Pipeline</a>
       <a href="../../#warehouse">Warehouse</a>
       <a href="../../#dashboards">Dashboards</a>
-      <a href="../../#findings">Findings</a>
     </nav>
     <a class="btn btn--small" href="https://github.com/nguyenvietkhoa1409/AI-job-disruption">GitHub</a>
   </div>
 </header>
 
-<main>
+<main class="dash-theme--feel">
 
 <section class="hero dash-hero">
   <div class="wrap">
@@ -61,20 +60,22 @@
 <section class="section section--alt">
   <div class="wrap">
 
-    <article class="chart" id="feel-about-ai">
+    <article class="chart chart--wide" id="feel-about-ai">
       <figure class="static-fig zoomable">
         <img src="img/feel-about-ai.webp" width="1600" height="459" loading="lazy"
              alt="Diverging bars for three survey questions: favorability 21% negative, 61% positive, 18% indifferent, net +40; trust in accuracy 46% distrust, 33% trust, 22% neither, net −13; AI a threat to your job 15% yes, 64% no, 21% not sure, net +49.">
       </figure>
       <div class="chart__text">
         <p class="chart__q">Chart 1 · Three questions</p>
-        <h2>How do developers feel about AI tools?</h2>
-        <p>Each question split into negative (left) and positive (right) answers, with the neutral answer on its own and the net score, positive minus negative.</p>
-        <div class="insight">
-          <p>Developers use AI more than they trust it. <b>61%</b> are favorable toward AI tools (net +40), yet <b>46%</b> distrust the accuracy of what it says against 33% who trust it (net <b>−13</b>). Only <b>15%</b> see AI as a threat to their job; 64% do not.</p>
+        <h2 class="chart__title"><span>How do developers feel about AI tools?</span></h2>
+        <p class="chart__desc">Each question split into negative (left) and positive (right) answers, with the neutral answer on its own and the net score, positive minus negative.</p>
+        <dl class="chart__rows">
+          <div><dt>Finding</dt><dd><div class="insight">
+<p>Developers use AI more than they trust it. <b>61%</b> are favorable toward AI tools (net +40), yet <b>46%</b> distrust the accuracy of what it says against 33% who trust it (net <b>−13</b>). Only <b>15%</b> see AI as a threat to their job; 64% do not.</p>
           <p>With 78.5% using AI tools at least monthly, we read the gap between use and trust as developers treating AI output as a draft to check rather than rejecting the tools.</p>
-        </div>
-        <p class="howto">Non-responses (27–32% on the AI questions) are left out of every rate; each rate carries its N.</p>
+</div></dd></div>
+          <div><dt>Note</dt><dd class="chart__note">Non-responses (27–32% on the AI questions) are left out of every rate; each rate carries its N.</dd></div>
+        </dl>
       </div>
     </article>
 
@@ -111,27 +112,31 @@
       </div>
       <div class="chart__text">
         <p class="chart__q">Chart 2 · By role</p>
-        <h2>Which roles feel differently about AI, and how are they paid?</h2>
-        <p>Left: the chosen measure per developer role against everyone (dashed line); blue = clearly more favorable, orange = clearly less, grey = not clear. Right: the role's median pay against peers in the same country with the same experience; a dark bar is clearly different from peers.</p>
-        <div class="insight viewer__note-target"></div>
-        <p>Attitude and pay only partly line up. AI/ML engineers are more favorable and paid more than peers (+28%); academic researchers and system administrators are less favorable and paid less (−31% and −30%). But game and graphics developers, the least favorable role, are paid in line with peers.</p>
-        <p class="howto">Try the switch above the chart; it behaves like the toggle in the Power BI report. Favorability and trust list only the roles that are clearly different; AI threat lists every role.</p>
+        <h2 class="chart__title"><span>Which roles feel differently about AI, and how are they paid?</span></h2>
+        <p class="chart__desc">Left: the chosen measure per developer role against everyone (dashed line); blue = clearly more favorable, orange = clearly less, grey = not clear. Right: the role's median pay against peers in the same country with the same experience; a dark bar is clearly different from peers.</p>
+        <dl class="chart__rows">
+          <div><dt>Finding</dt><dd><div class="insight viewer__note-target"></div>
+<p>Attitude and pay only partly line up. AI/ML engineers are more favorable and paid more than peers (+28%); academic researchers and system administrators are less favorable and paid less (−31% and −30%). But game and graphics developers, the least favorable role, are paid in line with peers.</p></dd></div>
+          <div><dt>Note</dt><dd class="chart__note">Try the switch above the chart; it behaves like the toggle in the Power BI report. Favorability and trust list only the roles that are clearly different; AI threat lists every role.</dd></div>
+        </dl>
       </div>
     </article>
 
-    <article class="chart" id="skills-last">
+    <article class="chart chart--wide" id="skills-last">
       <figure class="static-fig zoomable">
         <img src="img/skills-last.webp" width="1600" height="537" loading="lazy"
              alt="Skills developers say will remain valuable, from the topic model: business / domain understanding 17.8%, code reading and writing 17.5%, complex problem-solving 16.4%; dumbbells by experience show business understanding at 11% for entry level against 20% for 10+ years, and problem solving at 17% against 10%.">
       </figure>
       <div class="chart__text">
         <p class="chart__q">Chart 3 · Skills that last</p>
-        <h2>Which skills do developers say will last, and does it depend on experience?</h2>
-        <p>Left: share of answers that name each skill theme, from the topic model of the free-text answers. Right: the same share for entry-level developers (up to 2 years) against those with 10+ years.</p>
-        <div class="insight">
-          <p>Among skills expected to last, <b>business and domain understanding</b> (17.8%), code reading and writing (17.5%) and complex problem-solving (16.4%) lead. Experience changes the answer: developers with 10+ years name business understanding almost twice as often as entry-level ones (<b>20%</b> against 11%), while entry-level developers emphasise problem solving (<b>17%</b> against 10%).</p>
-        </div>
-        <p class="howto">These are expectations, not outcomes. The topic model covers 69.7% of valid answers (answers of four words or fewer get no topic), and respondents are self-selected.</p>
+        <h2 class="chart__title"><span>Which skills do developers say will last, and does it depend on experience?</span></h2>
+        <p class="chart__desc">Left: share of answers that name each skill theme, from the topic model of the free-text answers. Right: the same share for entry-level developers (up to 2 years) against those with 10+ years.</p>
+        <dl class="chart__rows">
+          <div><dt>Finding</dt><dd><div class="insight">
+<p>Among skills expected to last, <b>business and domain understanding</b> (17.8%), code reading and writing (17.5%) and complex problem-solving (16.4%) lead. Experience changes the answer: developers with 10+ years name business understanding almost twice as often as entry-level ones (<b>20%</b> against 11%), while entry-level developers emphasise problem solving (<b>17%</b> against 10%).</p>
+</div></dd></div>
+          <div><dt>Note</dt><dd class="chart__note">These are expectations, not outcomes. The topic model covers 69.7% of valid answers (answers of four words or fewer get no topic), and respondents are self-selected.</dd></div>
+        </dl>
       </div>
     </article>
 
