@@ -19,20 +19,19 @@
       <a href="../../#pipeline">Pipeline</a>
       <a href="../../#warehouse">Warehouse</a>
       <a href="../../#dashboards">Dashboards</a>
-      <a href="../../#findings">Findings</a>
     </nav>
     <a class="btn btn--small" href="https://github.com/nguyenvietkhoa1409/AI-job-disruption">GitHub</a>
   </div>
 </header>
 
-<main>
+<main class="dash-theme--cut">
 
 <section class="hero dash-hero">
   <div class="wrap">
     <p class="crumbs"><a href="../../">Home</a><span>/</span><a href="../../#dashboards">Dashboards</a><span>/</span>Layoffs</p>
     <p class="eyebrow">Dashboard 2 of 5 · What is being cut</p>
     <h1>When, where and how deep tech layoffs went</h1>
-    <p class="lede" data-page-lede>The monthly trend, the same trend by continent, the countries and the sectors, over the full tracker range from 2020-03-11 to 2026-09-08.</p>
+    <p class="lede" data-page-lede>The monthly trend, the same trend by continent, the countries and the sectors, over the full tracker range from <span class="nw">2020-03-11</span> to <span class="nw">2026-09-08</span>.</p>
     <div class="chips"><span>Filters on both pages:</span>
       <span class="chip">Date range</span><span class="chip">Country</span><span class="chip">Industry sector</span><span class="chip">Funding stage</span>
     </div>
@@ -103,27 +102,31 @@
       </div>
       <div class="chart__text">
         <p class="chart__q">Chart 1 · Trend</p>
-        <h2>How many people were laid off each month?</h2>
-        <p>Monthly total for the whole tracker, switchable between people and events, repeated below as small multiples by continent. Each continent panel has its own scale.</p>
-        <div class="insight viewer__note-target"></div>
-        <p>The ChatGPT launch (November 2022) is marked as context, not cause: the 2022–2023 cuts are commonly attributed to post-pandemic overhiring and rising interest rates.</p>
-        <p class="howto">Try the switch above the chart; it behaves like the toggle in the Power BI report.</p>
+        <h2 class="chart__title"><span>How many people were laid off each month?</span></h2>
+        <p class="chart__desc">Monthly total for the whole tracker, switchable between people and events, repeated below as small multiples by continent. Each continent panel has its own scale.</p>
+        <dl class="chart__rows">
+          <div><dt>Finding</dt><dd><div class="insight viewer__note-target"></div>
+<p>The ChatGPT launch (November 2022) is marked as context, not cause: the 2022–2023 cuts are commonly attributed to post-pandemic overhiring and rising interest rates.</p></dd></div>
+          <div><dt>Note</dt><dd class="chart__note">Try the switch above the chart; it behaves like the toggle in the Power BI report.</dd></div>
+        </dl>
       </div>
     </article>
 
-    <article class="chart" id="map">
+    <article class="chart chart--wide" id="map">
       <figure class="static-fig zoomable">
         <img src="img/when-where/map.webp" width="1144" height="550" loading="lazy"
              alt="World map of layoff headcount on a logarithmic scale: United States 660k, India 68k, Canada 17k, Brazil 12k.">
       </figure>
       <div class="chart__text">
         <p class="chart__q">Chart 2 · Where</p>
-        <h2>Where were the layoffs?</h2>
-        <p>Headcount by country, shaded on a logarithmic class scale so that countries other than the United States stay readable.</p>
-        <div class="insight">
-          <p>The United States holds <b>71.1%</b> of the headcount (about 660,000 people) and India <b>7.3%</b> (about 68,000), followed by Canada (about 17,000) and Brazil (about 12,000). North America as a whole holds 73%.</p>
-        </div>
-        <p class="howto">This skew reflects the tracker's coverage of U.S. technology companies as much as the market itself.</p>
+        <h2 class="chart__title"><span>Where were the layoffs?</span></h2>
+        <p class="chart__desc">Headcount by country, shaded on a logarithmic class scale so that countries other than the United States stay readable.</p>
+        <dl class="chart__rows">
+          <div><dt>Finding</dt><dd><div class="insight">
+<p>The United States holds <b>71.1%</b> of the headcount (about 660,000 people) and India <b>7.3%</b> (about 68,000), followed by Canada (about 17,000) and Brazil (about 12,000). North America as a whole holds 73%.</p>
+</div></dd></div>
+          <div><dt>Note</dt><dd class="chart__note">This skew reflects the tracker's coverage of U.S. technology companies as much as the market itself.</dd></div>
+        </dl>
       </div>
     </article>
 
@@ -134,12 +137,14 @@
       </figure>
       <div class="chart__text">
         <p class="chart__q">Chart 3 · How deep</p>
-        <h2>How big and how deep were the cuts, by sector?</h2>
-        <p>Left: people laid off and share of headcount. Right: median share of staff laid off per event, with the shutdown share as a dot. N = events.</p>
-        <div class="insight">
-          <p>The sectors that lose the most people are not the ones that cut the deepest. Retail &amp; Consumer leads with <b>293k</b> people (32%) and Technology &amp; Software follows with <b>177k</b> (19%), yet their median events remove 20% and 15% of staff. The deepest median cut is in Energy (<b>25%</b>), with only 9.9k people in 31 events.</p>
-        </div>
-        <p class="howto">"Other" is a catch-all and is drawn grey. In the tracker, "Retail" means retail-technology companies, not retailers in general.</p>
+        <h2 class="chart__title"><span>How big and how deep were the cuts, by sector?</span></h2>
+        <p class="chart__desc">Left: people laid off and share of headcount. Right: median share of staff laid off per event, with the shutdown share as a dot. N = events.</p>
+        <dl class="chart__rows">
+          <div><dt>Finding</dt><dd><div class="insight">
+<p>The sectors that lose the most people are not the ones that cut the deepest. Retail &amp; Consumer leads with <b>293k</b> people (32%) and Technology &amp; Software follows with <b>177k</b> (19%), yet their median events remove 20% and 15% of staff. The deepest median cut is in Energy (<b>25%</b>), with only 9.9k people in 31 events.</p>
+</div></dd></div>
+          <div><dt>Note</dt><dd class="chart__note">"Other" is a catch-all and is drawn grey. In the tracker, "Retail" means retail-technology companies, not retailers in general.</dd></div>
+        </dl>
       </div>
     </article>
 
@@ -178,60 +183,68 @@
       </figure>
       <div class="chart__text">
         <p class="chart__q">Chart 1 · Funding stage</p>
-        <h2>Do younger companies cut a bigger share of their staff?</h2>
-        <p>Median share of staff laid off per event, by funding stage, with the share of events that were full shutdowns as a dot.</p>
-        <div class="insight">
-          <p>Yes, by a wide margin. The median Seed-stage event removes <b>100%</b> of the staff (N = 128): the typical Seed-stage layoff is a shutdown. The median then falls with every funding round, from 33% at Series A to <b>10%</b> for Post-IPO companies (N = 689).</p>
-        </div>
-        <p class="howto">Series G to J are left out (N &lt; 30). Acquired, private-equity, subsidiary and unknown statuses are pooled into "Other".</p>
+        <h2 class="chart__title"><span>Do younger companies cut a bigger share of their staff?</span></h2>
+        <p class="chart__desc">Median share of staff laid off per event, by funding stage, with the share of events that were full shutdowns as a dot.</p>
+        <dl class="chart__rows">
+          <div><dt>Finding</dt><dd><div class="insight">
+<p>Yes, by a wide margin. The median Seed-stage event removes <b>100%</b> of the staff (N = 128): the typical Seed-stage layoff is a shutdown. The median then falls with every funding round, from 33% at Series A to <b>10%</b> for Post-IPO companies (N = 689).</p>
+</div></dd></div>
+          <div><dt>Note</dt><dd class="chart__note">Series G to J are left out (N &lt; 30). Acquired, private-equity, subsidiary and unknown statuses are pooled into "Other".</dd></div>
+        </dl>
       </div>
     </article>
 
-    <article class="chart" id="shutdowns">
+    <article class="chart chart--wide" id="shutdowns">
       <figure class="static-fig zoomable">
         <img src="img/who-cut-most/shutdowns.webp" width="1181" height="509" loading="lazy"
              alt="Share of layoff events that were full shutdowns by year: 8.59% in 2020, 7.46% in 2022, 12.46% in 2023, 21.74% in 2024, 24.02% in 2025 and 18.09% in 2026.">
       </figure>
       <div class="chart__text">
         <p class="chart__q">Chart 2 · Shutdowns</p>
-        <h2>Are more companies shutting down outright?</h2>
-        <p>Share of events that removed 100% of the staff, per year. The dashed line is the share over all years (13%).</p>
-        <div class="insight">
-          <p>The share of full shutdowns rose from 8.6% in 2020 to <b>24.0%</b> in 2025 (N = 179). As the number of events fell, a growing share of them were closures. Because most shutdowns state no headcount, this shift does not show in headcount totals.</p>
-        </div>
-        <p class="howto">2021 is not drawn (N = 18). 2026 is a partial year.</p>
+        <h2 class="chart__title"><span>Are more companies shutting down outright?</span></h2>
+        <p class="chart__desc">Share of events that removed 100% of the staff, per year. The dashed line is the share over all years (13%).</p>
+        <dl class="chart__rows">
+          <div><dt>Finding</dt><dd><div class="insight">
+<p>The share of full shutdowns rose from 8.6% in 2020 to <b>24.0%</b> in 2025 (N = 179). As the number of events fell, a growing share of them were closures. Because most shutdowns state no headcount, this shift does not show in headcount totals.</p>
+</div></dd></div>
+          <div><dt>Note</dt><dd class="chart__note">2021 is not drawn (N = 18). 2026 is a partial year.</dd></div>
+        </dl>
       </div>
     </article>
 
-    <article class="chart" id="event-scatter">
+    <article class="chart chart--wide" id="event-scatter">
       <figure class="static-fig zoomable">
         <img src="img/who-cut-most/event-scatter.webp" width="1600" height="627" loading="lazy"
              alt="Every layoff event by date on a logarithmic headcount scale, with the median of 90 people marked and the ten largest events labelled: Intel 22k, Oracle 21k, Amazon 16k, Intel 15k.">
       </figure>
       <div class="chart__text">
         <p class="chart__q">Chart 3 · Typical against largest</p>
-        <h2>How does a typical layoff compare with the biggest ones?</h2>
-        <p>Every event on a logarithmic headcount scale. Dark dots are the ten largest events; rings are shutdowns; grey ticks at the bottom are events with no headcount.</p>
-        <div class="insight">
-          <p>The median event affects <b>90 people</b>, and most fall between 10 and 1,000. The ten largest are far above that range and mostly recent: Intel with 22,000 (April 2025), Oracle with 21,000, Amazon with 16,000 (January 2026). Over the full range the ten largest events hold 15.7% of all people laid off; within the 2025-01 to 2026-03 comparison window the ten largest hold <b>54.1%</b>.</p>
-        </div>
-        <p class="howto">Recent layoff totals therefore rest on a handful of decisions.</p>
+        <h2 class="chart__title"><span>How does a typical layoff compare with the biggest ones?</span></h2>
+        <p class="chart__desc">Every event on a logarithmic headcount scale. Dark dots are the ten largest events; rings are shutdowns; grey ticks at the bottom are events with no headcount.</p>
+        <dl class="chart__rows">
+          <div><dt>Finding</dt><dd><div class="insight">
+<p>The median event affects <b>90 people</b>, and most fall between 10 and 1,000. The ten largest are far above that range and mostly recent: Intel with 22,000 (April 2025), Oracle with 21,000, Amazon with 16,000 (January 2026). Over the full range the ten largest events hold 15.7% of all people laid off; within the 2025-01 to 2026-03 comparison window the ten largest hold <b>54.1%</b>.</p>
+</div></dd></div>
+          <div><dt>Note</dt><dd class="chart__note">Recent layoff totals therefore rest on a handful of decisions.</dd></div>
+        </dl>
       </div>
     </article>
 
-    <article class="chart" id="top-companies">
+    <article class="chart chart--wide" id="top-companies">
       <figure class="static-fig zoomable">
         <img src="img/who-cut-most/top-companies.webp" width="1600" height="470" loading="lazy"
              alt="Companies with the most people laid off: Amazon 59,560 in 24 events, Intel 43,115 in 12, Meta 35,700 in 12, Microsoft 34,855 in 17, Dell 23,650 in 5.">
       </figure>
       <div class="chart__text">
         <p class="chart__q">Chart 4 · Companies</p>
-        <h2>Which companies cut most, and most often?</h2>
-        <p>Companies ranked by people laid off, with the number of events, their share of all people laid off and their largest single event.</p>
-        <div class="insight">
-          <p>The same firms return. Amazon leads with <b>59,560</b> people in 24 events, followed by Intel (43,115 in 12), Meta (35,700 in 12), Microsoft (34,855 in 17) and Dell (23,650 in 5).</p>
-        </div>
-        <p class="howto">An event is identified by company, date and location, so repeated companies are separate events, not duplicates.</p>
+        <h2 class="chart__title"><span>Which companies cut most, and most often?</span></h2>
+        <p class="chart__desc">Companies ranked by people laid off, with the number of events, their share of all people laid off and their largest single event.</p>
+        <dl class="chart__rows">
+          <div><dt>Finding</dt><dd><div class="insight">
+<p>The same firms return. Amazon leads with <b>59,560</b> people in 24 events, followed by Intel (43,115 in 12), Meta (35,700 in 12), Microsoft (34,855 in 17) and Dell (23,650 in 5).</p>
+</div></dd></div>
+          <div><dt>Note</dt><dd class="chart__note">An event is identified by company, date and location, so repeated companies are separate events, not duplicates.</dd></div>
+        </dl>
       </div>
     </article>
 

@@ -19,13 +19,12 @@
       <a href="../../#pipeline">Pipeline</a>
       <a href="../../#warehouse">Warehouse</a>
       <a href="../../#dashboards">Dashboards</a>
-      <a href="../../#findings">Findings</a>
     </nav>
     <a class="btn btn--small" href="https://github.com/nguyenvietkhoa1409/AI-job-disruption">GitHub</a>
   </div>
 </header>
 
-<main>
+<main class="dash-theme--all">
 
 <section class="hero dash-hero">
   <div class="wrap">
@@ -68,28 +67,32 @@
       </figure>
       <div class="chart__text">
         <p class="chart__q">Chart 1 · Cuts against hiring</p>
-        <h2>Which sectors carry more of the cuts than of the postings?</h2>
-        <p>A sector's share of layoff headcount in the window minus its share of AI postings, in percentage points. Purple = more of the cuts; navy = more of the postings.</p>
-        <div class="insight">
-          <p>Cuts and AI hiring diverge. Technology &amp; Software holds <b>33.6%</b> of the cuts but <b>7.8%</b> of the postings; Manufacturing &amp; Industrial is the reverse (<b>−16.7</b> points). Combined, Technology and Retail carry 66% of the headcount but 17% of the postings (63% and 15.8% across all sectors).</p>
-        </div>
-        <p class="howto">The postings sample covers AI roles only and its sector mix is nearly flat (7–17%), so the gaps partly reflect that design.</p>
+        <h2 class="chart__title"><span>Which sectors carry more of the cuts than of the postings?</span></h2>
+        <p class="chart__desc">A sector's share of layoff headcount in the window minus its share of AI postings, in percentage points. Purple = more of the cuts; navy = more of the postings.</p>
+        <dl class="chart__rows">
+          <div><dt>Finding</dt><dd><div class="insight">
+<p>Cuts and AI hiring diverge. Technology &amp; Software holds <b>33.6%</b> of the cuts but <b>7.8%</b> of the postings; Manufacturing &amp; Industrial is the reverse (<b>−16.7</b> points). Combined, Technology and Retail carry 66% of the headcount but 17% of the postings (63% and 15.8% across all sectors).</p>
+</div></dd></div>
+          <div><dt>Note</dt><dd class="chart__note">The postings sample covers AI roles only and its sector mix is nearly flat (7–17%), so the gaps partly reflect that design.</dd></div>
+        </dl>
       </div>
     </article>
 
-    <article class="chart" id="sector-threat">
+    <article class="chart chart--wide" id="sector-threat">
       <figure class="static-fig zoomable">
         <img src="img/sector-threat.webp" width="1375" height="644" loading="lazy"
              alt="AI-threat rate by sector against people laid off in the window on a log scale, bubble size = AI postings, with 95% ranges: Media &amp; Marketing about 18% is the only sector clearly above the 14.9% line; Technology and Retail, with the most layoffs, sit on the line.">
       </figure>
       <div class="chart__text">
         <p class="chart__q">Chart 2 · Cuts against worry</p>
-        <h2>Do the sectors with the most layoffs worry more about AI?</h2>
-        <p>Each bubble is a sector: people laid off in the window across (log scale), the share of developers who see AI as a threat up, with the 95% range as a line. Bubble size = AI postings; dashed = overall 14.9%.</p>
-        <div class="insight">
-          <p>Cuts and worry diverge. Only <b>Media &amp; Marketing</b> is clearly above the overall rate; Technology and Retail, the largest cutters, sit at the average. Across the nine sectors the rank correlation between layoffs and threat is about <b>0.28</b>, which is not significant.</p>
-        </div>
-        <p class="howto">Layoff events are company decisions and survey answers are individual views, so a sector-level comparison cannot say whether one drives the other.</p>
+        <h2 class="chart__title"><span>Do the sectors with the most layoffs worry more about AI?</span></h2>
+        <p class="chart__desc">Each bubble is a sector: people laid off in the window across (log scale), the share of developers who see AI as a threat up, with the 95% range as a line. Bubble size = AI postings; dashed = overall 14.9%.</p>
+        <dl class="chart__rows">
+          <div><dt>Finding</dt><dd><div class="insight">
+<p>Cuts and worry diverge. Only <b>Media &amp; Marketing</b> is clearly above the overall rate; Technology and Retail, the largest cutters, sit at the average. Across the nine sectors the rank correlation between layoffs and threat is about <b>0.28</b>, which is not significant.</p>
+</div></dd></div>
+          <div><dt>Note</dt><dd class="chart__note">Layoff events are company decisions and survey answers are individual views, so a sector-level comparison cannot say whether one drives the other.</dd></div>
+        </dl>
       </div>
     </article>
 
@@ -100,28 +103,32 @@
       </figure>
       <div class="chart__text">
         <p class="chart__q">Chart 3 · Growth against worry</p>
-        <h2>Do developers in fast-growing role families worry less about AI?</h2>
-        <p>For each role family matched between the survey and the postings: the share of developers who feel threatened by AI (95% range as a line, dashed = overall 14.9%), next to the family's demand growth a year.</p>
-        <div class="insight">
-          <p>Growth and worry diverge. The fastest-growing matched family, <b>AI Engineering</b> (+40.2% a year), reports <b>19.8%</b> threat against 14.9% overall, while Data Science (13.2%, +31.5%) is in line. Business, among the slowest-growing, is also clearly above (24.4%).</p>
-        </div>
-        <p class="howto">Demand growth is a field supplied with the postings dataset, read directionally.</p>
+        <h2 class="chart__title"><span>Do developers in fast-growing role families worry less about AI?</span></h2>
+        <p class="chart__desc">For each role family matched between the survey and the postings: the share of developers who feel threatened by AI (95% range as a line, dashed = overall 14.9%), next to the family's demand growth a year.</p>
+        <dl class="chart__rows">
+          <div><dt>Finding</dt><dd><div class="insight">
+<p>Growth and worry diverge. The fastest-growing matched family, <b>AI Engineering</b> (+40.2% a year), reports <b>19.8%</b> threat against 14.9% overall, while Data Science (13.2%, +31.5%) is in line. Business, among the slowest-growing, is also clearly above (24.4%).</p>
+</div></dd></div>
+          <div><dt>Note</dt><dd class="chart__note">Demand growth is a field supplied with the postings dataset, read directionally.</dd></div>
+        </dl>
       </div>
     </article>
 
-    <article class="chart" id="skills-rank">
+    <article class="chart chart--wide" id="skills-rank">
       <figure class="static-fig zoomable">
         <img src="img/skills-rank.webp" width="1495" height="636" loading="lazy"
              alt="Four matched skills ranked in developers' answers and in AI postings: Problem solving 23.3% and 1st for developers, 20.9% and 2nd in postings; System &amp; architecture design 2nd against 4th; Business &amp; domain understanding 3rd in both; Communication &amp; leadership 4th for developers (7.2%) but 1st in postings (46.8%).">
       </figure>
       <div class="chart__text">
         <p class="chart__q">Chart 4 · Skills</p>
-        <h2>Do developers and AI postings value the same skills?</h2>
-        <p>Four skill themes matched between the developers' free-text answers and the AI postings, with their rank in each. A red ring marks ranks that differ by two places or more.</p>
-        <div class="insight">
-          <p>Skills only partly agree. Of the four matched skills, only <b>business and domain understanding</b> keeps its rank (3rd in both). Communication and leadership tops the postings (<b>46.8%</b>) but is fourth in developers' answers (7.2%).</p>
-        </div>
-        <p class="howto">Compare ranks, not bar lengths: the bases differ (N = 15,684 answers against 1,500 postings).</p>
+        <h2 class="chart__title"><span>Do developers and AI postings value the same skills?</span></h2>
+        <p class="chart__desc">Four skill themes matched between the developers' free-text answers and the AI postings, with their rank in each. A red ring marks ranks that differ by two places or more.</p>
+        <dl class="chart__rows">
+          <div><dt>Finding</dt><dd><div class="insight">
+<p>Skills only partly agree. Of the four matched skills, only <b>business and domain understanding</b> keeps its rank (3rd in both). Communication and leadership tops the postings (<b>46.8%</b>) but is fourth in developers' answers (7.2%).</p>
+</div></dd></div>
+          <div><dt>Note</dt><dd class="chart__note">Compare ranks, not bar lengths: the bases differ (N = 15,684 answers against 1,500 postings).</dd></div>
+        </dl>
       </div>
     </article>
 

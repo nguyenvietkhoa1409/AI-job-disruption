@@ -126,6 +126,12 @@
   const lede = document.querySelector('[data-page-lede]');
   const baseTitle = document.title;
 
+  // Escape the lede text, then keep ISO dates (2026-09-08, 2025-01) on one line.
+  function setLede(text) {
+    const esc = text.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    lede.innerHTML = esc.replace(/\b\d{4}-\d{2}(?:-\d{2})?\b/g, '<span class="nw">$&</span>');
+  }
+
   function select(name) {
     const tab = tabs.find(t => t.dataset.page === name) || tabs[0];
     tabs.forEach(t => {
@@ -135,7 +141,7 @@
     });
     panels.forEach(p => { p.hidden = p.dataset.page !== tab.dataset.page; });
     const panel = panels.find(p => !p.hidden);
-    if (lede && panel && panel.dataset.lede) lede.textContent = panel.dataset.lede;
+    if (lede && panel && panel.dataset.lede) setLede(panel.dataset.lede);
     if (panel && panel.dataset.title) document.title = panel.dataset.title + ' · ' + baseTitle;
     return tab;
   }
