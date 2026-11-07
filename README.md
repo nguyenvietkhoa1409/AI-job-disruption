@@ -4,11 +4,13 @@
 
 Since 2020, technology companies have gone through repeated waves of layoffs while generative AI has become increasingly integrated into software work. This project brings together three public datasets to examine reported workforce reductions, advertised AI-related roles, and developers' views on AI's impact on their work.
 
-The pipeline processes **55,291 raw records** from three sources. After validation, **55,160 records are loaded into a PostgreSQL warehouse** and explored in a Power BI report. The goal is to compare these perspectives at shared sector and role-family levels—not to infer that AI hiring directly replaces jobs lost elsewhere.
+The pipeline processes **55,291 raw records** from three sources. After validation, **55,160 records are loaded into a PostgreSQL warehouse** and explored in a Power BI report. The goal is to compare these perspectives at shared sector and role-family levels, and bring potentially useful  insights for labor-market and workforce analysts, technology employers and recruiters, and developers and students weighing their career paths.
 
 **Authors:** [Viet Khoa Nguyen](https://github.com/nguyenvietkhoa1409) & [Mai Anh Tieu](https://github.com/maianhtieu87)
 
-**Full project report:** [Technical and analytical report](https://drive.google.com/file/d/1VmquvspkbcTTeaY8uYWBeI0jAiQKB644/view?usp=drive_link)
+You can view our [Technical report](https://drive.google.com/file/d/1VmquvspkbcTTeaY8uYWBeI0jAiQKB644/view?usp=drive_link) and [Introduction website](https://nguyenvietkhoa1409.github.io/AI-job-disruption/#dashboards) including every dashboard view here. 
+
+
 
 ## Project at a glance
 
