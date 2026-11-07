@@ -8,8 +8,7 @@ The pipeline processes **55,291 raw records** from three sources. After validati
 
 **Authors:** [Viet Khoa Nguyen](https://github.com/nguyenvietkhoa1409) & [Mai Anh Tieu](https://github.com/maianhtieu87)
 
-<!-- TODO: Replace this placeholder with the actual path and filename of the comprehensive report in `docs/`. -->
-**Full project report:** [Technical and analytical report](https://drive.google.com/file/d/1kQ-cRldtvz4ioalNKGUerVl7uJOeQ4dC/view?usp=sharing)
+**Full project report:** [Technical and analytical report](https://drive.google.com/file/d/1VmquvspkbcTTeaY8uYWBeI0jAiQKB644/view?usp=drive_link)
 
 ## Project at a glance
 
@@ -64,8 +63,6 @@ The report is organized into **five sections across seven dashboard pages**: Ove
 
 *Figure 10. Cross-source dashboard: sector-level cuts against AI postings, and role-family demand growth against practitioner threat perception.*
 
-<!-- REVIEW: Confirm that the report contains exactly seven pages across these five sections. -->
-
 ## Data sources
 
 Each source has a different grain and contributes a distinct perspective. Raw files are not committed to this repository.
@@ -77,8 +74,6 @@ Each source has a different grain and contributes a distinct perspective. Raw fi
 | [Stack Overflow Developer Survey 2025](https://survey.stackoverflow.co/) ([Kaggle CSV copy](https://www.kaggle.com/datasets/edoardogalli/stack-overflow-annual-developer-survey-2025)) | One survey respondent | 49,191 | 2025 survey wave | Self-selected respondents; no respondent-level date |
 
 The pipeline uses 11 fields from Layoffs, 25 from AI Jobs, and 18 from the survey. Missing survey answers are retained as explicit missing categories where appropriate; missing layoff headcounts remain SQL `NULL` and are not imputed.
-
-<!-- REVIEW: Verify the AI Jobs dataset's collection method, source provenance, duplicate handling, and salary unit (e.g. annual USD) against its documentation. Also verify the exact license and attribution requirements for all three source files before redistributing or republishing derived data. “Public open-data terms” is not a sufficiently specific license statement. -->
 
 ## Architecture
 
@@ -115,8 +110,6 @@ The 18 quarantined layoff rows were older records from duplicate-event groups; 1
 
 The warehouse keeps the three source subject areas separate while sharing conformed dimensions. It also includes a posting-skill bridge and a country-month summary mart.
 
-<!-- REVIEW: The original ERD caption says “8 dimension tables, 4 fact tables and 1 summary view”, while the text describes three primary fact tables plus a bridge table. Confirm the table classification and make the diagram caption and documentation consistent. -->
-
 ## Topic modeling
 
 The survey's `AIOpen` field contains optional free-text responses about skills developers expect to remain valuable as AI advances. Of 22,511 responses that passed quality and spam checks, 15,698 remained after short answers were filtered.
@@ -126,8 +119,6 @@ The pipeline converts answers into TF-IDF features and applies NMF to identify t
 ![Topic modeling workflow](materials/image_2.png)
 
 *Figure 3. From raw text to dimensional topic assignments. Dashed borders mark filtered records; the red node is the automatic halt on a label mismatch.*
-
-<!-- REVIEW: The NMF topic table's shares (e.g. 14.7% for business/domain understanding) differ from the later sentiment findings (17.8%). Reconcile the populations, denominators, or classification methods before publishing topic percentages. Also document and, ideally, sensitivity-test the exclusion of answers of four words or fewer. -->
 
 ## Key findings
 
@@ -140,10 +131,6 @@ The findings below are descriptive results from the supplied datasets and should
 | **AI roles and pay** | Median advertised salary rises from $145,000 at Entry level to $238,000 at Lead level (+64%). Dataset-supplied demand-growth indicators are highest for ML Operations (+53%) and AI Engineering (+40%). |
 | **Developer sentiment** | Among survey respondents, 78.5% report using AI at least monthly, 46% distrust its accuracy, and 14.9% view it as a threat to their job. |
 | **Cross-source** | Technology & Software represents 33.6% of recorded layoff headcount but 7.8% of AI job postings in the selected datasets. These are shares of different datasets, not directly comparable measures of total sector employment, layoffs, or hiring. |
-
-<!-- REVIEW: The “fewer events, similar headcount” finding depends on headcount reporting being comparable across the two 15-month periods. Check the percentage of events with known headcount in each period. -->
-<!-- REVIEW: Confirm how the dashboard's 95% intervals are calculated. A subgroup interval excluding the overall rate is not, by itself, a formal independent two-group significance test because the overall rate includes the subgroup. Document the interval method, denominator, survey weighting (if any), and multiple-comparison treatment. -->
-<!-- REVIEW: Confirm the salary unit and whether the Entry-to-Lead comparison uses annual advertised USD salaries. Treat this as an unadjusted comparison; role, experience, and geography may influence the observed difference. -->
 
 ## Limitations
 
@@ -160,8 +147,6 @@ The findings below are descriptive results from the supplied datasets and should
 - Python 3.12
 - Docker and Docker Compose
 - The three raw CSV files listed below
-
-<!-- REVIEW: The supplied project notes state that Python 3.12 is required because of the pinned NumPy version. Verify this against `requirements.txt` before release and update the requirement if dependencies change. -->
 
 ### 1. Install dependencies
 
@@ -202,8 +187,6 @@ python -m src.warehouse.loader
 
 With the supplied snapshots, the expected loaded counts are 4,582 layoff events, 1,500 job postings, 49,078 survey responses, and 9,419 posting-skill pairs.
 
-<!-- REVIEW: Confirm whether the loader skips existing keys only or also updates changed source records. Idempotent repeat loading does not necessarily synchronize corrected source records. -->
-
 ### 4. Run with Airflow (optional)
 
 Docker Compose also provides Airflow at [http://localhost:8080](http://localhost:8080). Build and start the services, retrieve the standalone admin password, and trigger the DAG:
@@ -216,8 +199,6 @@ docker exec ai_job_disruption_airflow airflow dags trigger ai_job_disruption_war
 ```
 
 The `ai_job_disruption_warehouse` DAG runs the dataset ETL tasks, checks the schema, and loads the warehouse. It is triggered manually and does not reset the schema.
-
-<!-- REVIEW: Confirm that first-time Airflow use requires running `setup_database.py` separately and verify the raw-data directory is mounted at the expected path inside the Airflow container. Add those prerequisites if needed. -->
 
 ### 5. Run tests
 
